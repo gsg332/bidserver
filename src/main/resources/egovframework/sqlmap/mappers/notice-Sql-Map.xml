@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.com.bidserver.notice.service.impl.NoticeMapper">
+
+	<select id="selectNoticeList" parameterType="map" resultType="HashMap">
+		SELECT notice_id, title, context, open_yn, create_id, notice_type,
+		 (select user_nm from tn_user_info where user_id=A.create_id) as user_nm,
+		 date_format(create_dt,'%Y-%m-%d %H:%I:%S') as create_dt ,
+		 fn_file_nm(file_id1) as file_nm1,
+	  	 fn_file_nm(file_id2) as file_nm2,
+	  	 file_id1,
+	  	 file_id2
+		from tn_notice_info A
+		order by create_dt desc
+	</select>
+	
+	<select id="selectNoticeList2" parameterType="map" resultType="HashMap">
+	  /* 공지사항 리스트 조회 (project.selectProjectList2) */	    
+	  SELECT *, 
+	  		fn_file_nm(file_id1) as file_nm1,
+	  		fn_file_nm(file_id2) as file_nm2
+		FROM tn_notice_info A
+		WHERE notice_id = #{notice_id}
+	</select>
+
+	<select id="getNoticeListCnt" parameterType="map" resultType="Integer">
+		SELECT count(*) 
+		from tn_notice_info 
+	</select>
+	 
+	<insert id="insertNoticeList" parameterType="map">
+		/* 공지사항 등록  (notice.insertNoticeList) */	
+	    <selectKey resultType="Integer" keyProperty="notice_id" order="AFTER" >
+		  SELECT LAST_INSERT_ID() as notice_id
+		</selectKey>
+	    insert into tn_notice_info
+	    (
+	    	title,
+	    	context,
+	    	open_yn,
+	    	notice_type,
+	    	create_dt,
+	    	create_id,
+	    	modify_dt,
+	    	modify_id
+	    )
+	    values(
+	    	#{title},
+	    	#{context},
+	    	#{open_yn},
+	    	#{notice_type},
+	    	sysdate(),
+	    	#{user},
+	    	sysdate(),
+	    	#{user}
+	    )
+	</insert>
+	
+	<update id="updateNoticeList" parameterType="map">
+	    update tn_notice_info
+	    set title = #{title},
+	    	context = #{context},
+	    	open_yn = #{open_yn},
+	    	notice_type = #{notice_type},
+	    	modify_dt = sysdate(),
+	    	modify_id = #{user}
+	    where notice_id = #{notice_id}
+	</update>
+	
+	<delete id="deleteNoticeList" parameterType="map">
+	    delete from tn_notice_info where notice_id = #{notice_id}
+	</delete>
+	
+	<update id="updateNoticeFileList" parameterType="map">
+	    /* 공지사항 파일  (notice.updateNoticeFileList) */	
+	    UPDATE tn_notice_info
+		set
+			file_id1 =	#{file_id1},
+			file_id2 =	#{file_id2},
+			create_id = create_id
+		where notice_id = #{notice_id}
+    </update>
+    
+    <select id="selectSendMsgList" parameterType="map" resultType="HashMap">
+    	/* 발신메세지 조회 (bid-Sql-Map.selectSendMsgList) */
+    	select A.*,
+    	 date_format(send_dt,'%Y-%m-%d %H:%i:%S') as send_time,
+    	 B.company_nm, C.bid_notice_nm,(select user_nm from tn_user_info where user_id=A.send_id) as send_nm 
+		from tn_bid_message_his A, tn_bid_company_info B, tn_bid_distribution_info C
+		where A.business_no = B.business_no 
+		and A.bid_notice_no = C.bid_notice_no
+		and A.bid_notice_cha_no = C.bid_notice_cha_no
+		<if test="companyNm!=null and !companyNm.equals('')">  and B.company_nm like CONCAT('%', #{companyNm}, '%')              </if>
+	    <if test="bidNoticeNo!=null and !bidNoticeNo.equals('')">  and CONCAT(CONCAT(A.bid_notice_no,'-'),A.bid_notice_cha_no) like CONCAT('%', #{bidNoticeNo}, '%')            </if>
+	    <if test="bidNoticeNm!=null and !bidNoticeNm.equals('')">  and C.bid_notice_nm like CONCAT('%', #{bidNoticeNm}, '%')            </if>
+	    <if test="bidStartDt!=null and !bidStartDt.equals('')">  and date_format(send_dt,'%Y%m%d') <![CDATA[>=]]> date_format(#{bidStartDt},'%Y%m%d')             </if>
+		<if test="bidEndDt!=null and !bidEndDt.equals('')">  and date_format(send_dt,'%Y%m%d') <![CDATA[<=]]> date_format(#{bidEndDt},'%Y%m%d')             </if>
+			
+	    <trim prefix="ORDER BY">
+		        <choose>
+				    <when test="sort != null and sort!=''">
+						<if test="sort.equals('bid_notice_nm')"> C.bid_notice_nm</if>
+					    <if test="sort.equals('bid_notice_no')"> A.bid_notice_no</if>
+						<if test="sort.equals('send_time')">A.send_dt </if>
+						<if test="sort.equals('business_no')">A.business_no </if>
+						<if test="sort.equals('company_nm')">B.company_nm</if>
+						<if test="sort.equals('message_type')">A.message_type</if>
+						<if test="sort.equals('catagory')">A.catagory</if>
+						<if test="order!=null and order.equals('desc')"> desc </if>
+						<if test="order!=null and order.equals('asc')"> asc </if>
+				    </when>
+				</choose>
+        </trim> 
+		Limit #{pageNo}, #{rows}
+    </select>
+    
+    <select id="getSendMsgListCnt" parameterType="map" resultType="Integer">
+    	/* 발신메세지 총 수량 조회 (bid-Sql-Map.getSendMsgCnt) */
+    	select count(*) as cnt
+		from tn_bid_message_his A, tn_bid_company_info B, tn_bid_distribution_info C
+		where A.business_no = B.business_no 
+		and A.bid_notice_no = C.bid_notice_no
+		and A.bid_notice_cha_no = C.bid_notice_cha_no
+		<if test="company_nm!=null and !company_nm.equals('')">  and B.company_nm like CONCAT('%', #{company_nm}, '%')              </if>
+	    <if test="bidNoticeNo!=null and !bidNoticeNo.equals('')">  and CONCAT(CONCAT(A.bid_notice_no,'-'),A.bid_notice_cha_no) like CONCAT('%', #{bidNoticeNo}, '%')            </if>
+	    <if test="bidNoticeNm!=null and !bidNoticeNm.equals('')">  and C.bid_notice_nm like CONCAT('%', #{bidNoticeNm}, '%')            </if> 
+		<if test="bidStartDt!=null and !bidStartDt.equals('')">  and date_format(send_dt,'%Y%m%d') <![CDATA[>=]]> date_format(#{bidStartDt},'%Y%m%d')             </if>
+		<if test="bidEndDt!=null and !bidEndDt.equals('')">  and date_format(send_dt,'%Y%m%d') <![CDATA[<=]]> date_format(#{bidEndDt},'%Y%m%d')             </if>	
+    </select>
+</mapper>

@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.com.bidserver.apply.service.impl.BidApplyMapper">
+
+	<select id="selectBidMyApplyList" parameterType="map" resultType="HashMap">
+		/* 입찰공고 리스트 (apply-Sql-Map.selectBidMyApplyList) */	
+		SELECT  (select user_nm from tn_user_info where user_id=A.user_id) user_nm,
+				(select user_nm from tn_user_info where user_id=C.apply_user_id1) user_nm1,
+				(select user_nm from tn_user_info where user_id=C.apply_user_id2) user_nm2,
+				(select user_nm from tn_user_info where user_id=C.apply_user_id3) user_nm3,
+				date_format(C.apply_dt1,'%Y.%m.%d %H:%i:%S') apply_dt_nm1,
+				date_format(C.apply_dt2,'%Y.%m.%d %H:%i:%S') apply_dt_nm2,
+				date_format(C.apply_dt3,'%Y.%m.%d %H:%i:%S') apply_dt_nm3,
+				fn_common_nm('apply_status_cd',status_cd1, null, null) status_nm1,
+				fn_common_nm('apply_status_cd',status_cd2, null, null) status_nm2,
+				fn_common_nm('apply_status_cd',status_cd3, null, null) status_nm3,
+				fn_file_nm(file_id) as file_nm,
+				A.*,B.*,C.*
+		from 
+		tn_bid_notice_info A
+		left outer join
+		tn_bid_notice_file B
+		on A.bid_notice_no = B.bid_notice_no  
+		and A.bid_notice_cha_no = B.bid_notice_cha_no
+		,
+		tn_bid_apply_info C
+		where  A.bid_notice_no = C.bid_notice_no  
+		and A.bid_notice_cha_no = C.bid_notice_cha_no
+		and (
+				C.apply_user_id1 = #{user}  or C.apply_user_id2 = #{user} or C.apply_user_id3 = #{user}
+			)
+			 <if test="bidStartDt!=null and !bidStartDt.equals('')">  and date_format(C.apply_dt1,'%Y%m%d') <![CDATA[>=]]> date_format(#{bidStartDt},'%Y%m%d')  </if>
+			    <if test="bidEndDt!=null and !bidEndDt.equals('')">  and date_format(C.apply_dt1,'%Y%m%d') <![CDATA[<=]]> date_format(#{bidEndDt},'%Y%m%d')             </if>
+		    <if test="bidNoticeNo!=null and !bidNoticeNo.equals('')">  and CONCAT(CONCAT(A.bid_notice_no,'-'),A.bid_notice_cha_no) like CONCAT('%', #{bidNoticeNo}, '%')            </if>
+		    <if test="bidNoticeNm!=null and !bidNoticeNm.equals('')">  and A.bid_notice_nm like CONCAT('%', #{bidNoticeNm}, '%')            </if>
+		    <if test="userId!=null and !userId.equals('')">  
+			    <if test="userId.equals('non')">   
+			        and C.apply_user_id1  is null            
+			    </if>
+			    <if test="!userId.equals('non')">   
+			        and C.apply_user_id1  =  #{userId}            
+			    </if>
+			</if>
+			<if test="finishYn!=null and !finishYn.equals('')">
+			    <if test="finishYn eq 'Y'.toString()">   
+			        and C.status_cd3  != '002'            
+			    </if>
+			    <if test="finishYn eq 'N'.toString()">   
+			        and C.status_cd3 = '002'            
+			    </if>
+			</if>
+			<if test="bid_notice_no!=null and !bid_notice_no.equals('')">
+			    and A.bid_notice_no = #{bid_notice_no} 
+			</if>
+			<if test="bid_notice_cha_no!=null and !bid_notice_cha_no.equals('')">
+			    and A.bid_notice_cha_no = #{bid_notice_cha_no}  
+			</if>
+		<trim prefix="ORDER BY">
+	        <choose>
+			    <when test="sort != null and sort!=''">
+					<if test="sort.equals('bid_notice_nm')"> A.bid_notice_nm</if>
+				    <if test="sort.equals('bid_notice_no')"> A.bid_notice_no desc</if>
+					<if test="sort.equals('noti_dt')">A.noti_dt desc</if>
+					<if test="sort.equals('demand_nm')">A.demand_nm </if>
+					<if test="sort.equals('bid_start_dt')">A.bid_start_dt desc</if>
+					<if test="sort.equals('bid_end_dt')">A.bid_end_dt desc</if>
+					<if test="sort.equals('contract_type_nm')">A.contract_type_nm </if>
+			    </when>
+			</choose>
+      	</trim> 
+	</select>
+	
+	<select id="getBidMyApplyListCnt" parameterType="map" resultType="Integer">
+	    /* 입찰공고 총갯수 (apply-Sql-Map.getBidMyApplyListCnt) */	
+		SELECT count(*) cnt
+		from 
+		tn_bid_notice_info A
+		left outer join
+		tn_bid_notice_file B
+		on A.bid_notice_no = B.bid_notice_no  
+		and A.bid_notice_cha_no = B.bid_notice_cha_no
+		,
+		tn_bid_apply_info C
+		where  A.bid_notice_no = C.bid_notice_no  
+		and A.bid_notice_cha_no = C.bid_notice_cha_no
+		and (
+				C.apply_user_id1 = #{user}  or C.apply_user_id2 = #{user} or C.apply_user_id3 = #{user}
+			)
+			 <if test="bidStartDt!=null and !bidStartDt.equals('')">  and date_format(C.apply_dt1,'%Y%m%d') <![CDATA[>=]]> date_format(#{bidStartDt},'%Y%m%d')  </if>
+			    <if test="bidEndDt!=null and !bidEndDt.equals('')">  and date_format(C.apply_dt1,'%Y%m%d') <![CDATA[<=]]> date_format(#{bidEndDt},'%Y%m%d')             </if>
+		    <if test="bidNoticeNo!=null and !bidNoticeNo.equals('')">  and CONCAT(CONCAT(A.bid_notice_no,'-'),A.bid_notice_cha_no) like CONCAT('%', #{bidNoticeNo}, '%')            </if>
+		    <if test="bidNoticeNm!=null and !bidNoticeNm.equals('')">  and A.bid_notice_nm like CONCAT('%', #{bidNoticeNm}, '%')            </if>
+		    <if test="userId!=null and !userId.equals('')">  
+			    <if test="userId.equals('non')">   
+			        and C.apply_user_id1  is null            
+			    </if>
+			    <if test="!userId.equals('non')">   
+			        and C.apply_user_id1  =  #{userId}            
+			    </if>
+			</if>
+			<if test="finishYn!=null and !finishYn.equals('')">
+			    <if test="finishYn eq 'Y'.toString()">   
+			        and C.status_cd3  != '002'            
+			    </if>
+			    <if test="finishYn eq 'N'.toString()">   
+			        and C.status_cd3 = '002'            
+			    </if>
+			</if>
+	</select>
+	
+	<update id="updateBidMyApplyList" parameterType="map">
+	     /* 견적승인  (apply-Sql-Map.updateBidMyApplyList) */	
+		UPDATE tn_bid_apply_info
+		set
+				<if test="status_step==1"> 
+							<if test="save_type==1"> 
+							    apply_comment1 = #{apply_comment},
+							</if>
+							<if test="save_type==2"> 
+							    apply_comment1 = #{apply_comment},
+							    status_cd1 = '001',
+							    apply_dt1 = sysdate(),
+							    status_step = '1',
+							</if>
+							<if test="save_type==3"> 
+							    apply_comment1 = #{apply_comment},
+							    status_cd1 = '002',
+							    status_cd2 = '001',
+							    apply_dt1 = sysdate(),
+							    status_step = '2',
+							    apply_user_id2 = (
+			    					select user_id 
+			    					from tn_user_info 
+			    					where team = (select A.team from tn_user_info A where A.user_id=#{user})
+			    					and role_cd = '2'
+			    				 ),
+							</if>
+				</if>
+				<if test="status_step==2"> 
+							<if test="save_type==1"> 
+							    apply_comment2 = #{apply_comment},
+							</if>
+							<if test="save_type==2"> 
+							    apply_comment2 = #{apply_comment},
+							    status_cd1 = '001',
+							    status_cd2 = '003',
+							    apply_dt2 = sysdate(),
+							    status_step = '1',
+							</if>
+							<if test="save_type==3"> 
+							    apply_comment2 = #{apply_comment},
+							    status_cd2 = '002',
+							    status_cd3 = '001',
+							    apply_dt2 = sysdate(),
+							    status_step = '3',
+							    apply_user_id3 = (
+			    					select user_id 
+			    					from tn_user_info 
+			    					where team = (select A.team from tn_user_info A where A.user_id=#{user})
+			    					and role_cd = '3'
+			    				 ),
+							</if>
+				</if>
+				<if test="status_step==3">
+							<if test="save_type==1"> 
+							    apply_comment3 = #{apply_comment},
+							</if>
+							<if test="save_type==2"> 
+							    apply_comment3 = #{apply_comment},
+							    status_cd2 = '001',
+							    status_cd3 = '003',
+							    apply_dt3 = sysdate(),
+							    status_step = '2',
+							</if>
+							<if test="save_type==3"> 
+							    apply_comment3 = #{apply_comment},
+							    status_cd3 = '002',
+							    apply_dt3 = sysdate(),
+							</if>
+				</if>
+		modify_dt = sysdate()
+		where bid_notice_no = #{bid_notice_no}
+		and bid_notice_cha_no =  #{bid_notice_cha_no}
+	</update>
+	 <update id="updateBidMyApplyFileList" parameterType="map">
+	    /*파일 저장  (apply-Sql-Map.updateBidMyApplyFileList) */	
+	    UPDATE tn_bid_apply_info
+		set
+			file_id =	#{file_id}
+		where bid_notice_no = #{bid_notice_no}
+		and bid_notice_cha_no = #{bid_notice_cha_no}
+    </update>
+    
+	 <delete id="deleteBidApplyList" parameterType="map">
+	     delete from  tn_bid_apply_info 
+	     where bid_notice_no = #{bid_notice_no}
+		and bid_notice_cha_no = #{bid_notice_cha_no}
+	 </delete>
+    
+	 
+	 <select id="selectBidApplyList" parameterType="map" resultType="HashMap">
+		/* 입찰공고 리스트 (apply-Sql-Map.selectBidApplyList) */	
+		SELECT  (select user_nm from tn_user_info where user_id=A.user_id) user_nm,
+				(select user_nm from tn_user_info where user_id=C.apply_user_id1) user_nm1,
+				(select user_nm from tn_user_info where user_id=C.apply_user_id2) user_nm2,
+				(select user_nm from tn_user_info where user_id=C.apply_user_id3) user_nm3,
+				date_format(C.apply_dt1,'%Y.%m.%d %H:%i:%S') apply_dt_nm1,
+				date_format(C.apply_dt2,'%Y.%m.%d %H:%i:%S') apply_dt_nm2,
+				date_format(C.apply_dt3,'%Y.%m.%d %H:%i:%S') apply_dt_nm3,
+				fn_common_nm('apply_status_cd',status_cd1, null, null) status_nm1,
+				fn_common_nm('apply_status_cd',status_cd2, null, null) status_nm2,
+				fn_common_nm('apply_status_cd',status_cd3, null, null) status_nm3,
+				fn_file_nm(file_id) as file_nm,
+				A.*,B.*,C.*
+		from 
+		tn_bid_notice_info A
+		left outer join
+		tn_bid_notice_file B
+		on A.bid_notice_no = B.bid_notice_no  
+		and A.bid_notice_cha_no = B.bid_notice_cha_no
+		,
+		tn_bid_apply_info C
+		where  A.bid_notice_no = C.bid_notice_no  
+		and A.bid_notice_cha_no = C.bid_notice_cha_no
+			<if test="bid_notice_no!=null and !bid_notice_no.equals('')">
+			    and A.bid_notice_no = #{bid_notice_no} 
+			</if>
+			<if test="bid_notice_cha_no!=null and !bid_notice_cha_no.equals('')">
+			    and A.bid_notice_cha_no = #{bid_notice_cha_no}  
+			</if>
+				
+	</select>
+</mapper>

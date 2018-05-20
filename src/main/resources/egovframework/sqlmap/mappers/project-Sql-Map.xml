@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.com.bidserver.project.service.impl.ProjectMapper">
+
+    <select id="selectProjectList" parameterType="map" resultType="HashMap">
+	  /* 프로젝트 리스트 조회 (project.selectProjectList) */	    
+	  SELECT *, 
+	  		fn_file_nm(file_id1) as file_nm1,
+	  		fn_file_nm(file_id2) as file_nm2,
+	  		fn_file_nm(file_id3) as file_nm3,
+	  		fn_file_nm(file_id4) as file_nm4,
+	  		fn_file_nm(file_id5) as file_nm5,
+	  		(select sum(make_price) from tn_bid_project_dtl where project_id = A.project_id) as make_price,
+	  		datediff(sysdate(), date_format(substr(cont_end_dt,1,8),'%Y%m%d')) as cont_term_day
+	  		
+		FROM tn_bid_project_info A
+		WHERE (
+		    	(
+		    	date_format(substr(cont_start_dt,1,8),'%Y%m%d') <![CDATA[>=]]> date_format(#{contStartDt},'%Y%m%d')  
+		    	and 
+		    	date_format(substr(cont_start_dt,1,8),'%Y%m%d') <![CDATA[<=]]> date_format(#{contEndDt},'%Y%m%d')
+		    	)
+		    	or
+		    	(
+		    	date_format(substr(cont_end_dt,1,8),'%Y%m%d') <![CDATA[>=]]> date_format(#{contStartDt},'%Y%m%d')  
+		    	and 
+		    	date_format(substr(cont_end_dt,1,8),'%Y%m%d') <![CDATA[<=]]> date_format(#{contEndDt},'%Y%m%d')
+		    	)
+		    	
+		    )  
+		    <if test="contYn!=null and !contYn.equals('')">  and A.completion like CONCAT('%', #{contYn}, '%')   </if>
+		ORDER BY completion asc, date_format(substr(cont_end_dt,1,8),'%Y%m%d') desc
+		Limit #{pageNo}, #{rows}
+	</select>
+	
+    <select id="selectProjectList2" parameterType="map" resultType="HashMap">
+	  /* 프로젝트 리스트 조회 (project.selectProjectList2) */	    
+	  SELECT *, 
+	  		fn_file_nm(file_id1) as file_nm1,
+	  		fn_file_nm(file_id2) as file_nm2,
+	  		fn_file_nm(file_id3) as file_nm3,
+	  		fn_file_nm(file_id4) as file_nm4,
+	  		fn_file_nm(file_id5) as file_nm5,
+	  		(select sum(make_price) from tn_bid_project_dtl where project_id = A.project_id) as make_price
+		FROM tn_bid_project_info A
+		WHERE project_id = #{project_id}
+	</select>
+	
+    <select id="getProjectListCnt" parameterType="map" resultType="Integer">
+		/* 프로젝트 리스트 총갯수 (project.getProjectListCnt) */	  
+        SELECT count(*) as cnt 
+		from tn_bid_project_info A
+		WHERE (
+		    	(
+		    	date_format(substr(cont_start_dt,1,8),'%Y%m%d') <![CDATA[>=]]> date_format(#{contStartDt},'%Y%m%d')  
+		    	and 
+		    	date_format(substr(cont_start_dt,1,8),'%Y%m%d') <![CDATA[<=]]> date_format(#{contEndDt},'%Y%m%d')
+		    	)
+		    	or
+		    	(
+		    	date_format(substr(cont_end_dt,1,8),'%Y%m%d') <![CDATA[>=]]> date_format(#{contStartDt},'%Y%m%d')  
+		    	and 
+		    	date_format(substr(cont_end_dt,1,8),'%Y%m%d') <![CDATA[<=]]> date_format(#{contEndDt},'%Y%m%d')
+		    	)
+		    	
+		    )  
+		    <if test="contYn!=null and !contYn.equals('')">  and A.completion like CONCAT('%', #{contYn}, '%')   </if>
+	</select>
+	
+    <select id="selectProjectDtlList" parameterType="map" resultType="HashMap">
+	  /* 프로젝트 제조업체 리스트 조회 (project.selectProjectDtlList) */	    
+	  SELECT *
+		FROM tn_bid_project_dtl 
+		WHERE project_id = #{project_id}   
+	</select>
+    <select id="selectProjectScheduleList" parameterType="map" resultType="HashMap">
+	  /* 프로젝트 진행상황 리스트 조회 (project.selectProjectScheduleList) */	    
+	  SELECT 
+	  	date_format(project_start_dt,'%Y-%m-%d') as project_start_dt,
+	  	date_format(project_end_dt,'%Y-%m-%d') as project_end_dt,
+	  	project_id, schedule_id, bigo, alarm
+		FROM tn_bid_project_schedule 
+		WHERE project_id = #{project_id}   
+		
+		<trim prefix="ORDER BY">
+	        <choose>
+			    <when test="sort != null and sort!=''">
+					<if test="sort.equals('project_start_dt')">project_start_dt </if>
+					<if test="sort.equals('project_end_dt')">project_end_dt </if>
+					<if test="sort.equals('bigo')">bigo </if>
+					<if test="sort.equals('alarm')">alarm</if>
+					
+					<if test="order!=null and order.equals('desc')"> desc </if>
+					<if test="order!=null and order.equals('asc')"> asc </if>
+			    </when>
+			</choose>
+           </trim> 
+	</select>
+	<select id="selectProjectTaxList" parameterType="map" resultType="HashMap">
+	  /* 프로젝트 매입매출 리스트 조회 (project.selectProjectTaxList) */	    
+	  SELECT 
+	  	date_format(tax_dt,'%Y-%m-%d') as tax_dt,
+	  	project_id, tax_id, sales, purchase
+		FROM tn_bid_project_tax 
+		WHERE project_id = #{project_id}   
+	</select>
+	
+    
+    <insert id="insertProjectList" parameterType="map">
+		/* 프로젝트 등록  (project.insertProjectList) */	
+	    <selectKey resultType="Integer" keyProperty="project_id" order="AFTER" >
+		  SELECT LAST_INSERT_ID() as project_id
+		</selectKey>
+		INSERT INTO tn_bid_project_info
+		(	
+			bid_notice_no,
+			bid_notice_cha_no,
+			bid_notice_nm,
+			order_agency_nm,
+			demand_nm,
+			demand_user_nm1,
+			demand_tel1,
+			demand_user_nm2,
+			demand_tel2,
+			cont_company_nm,
+			cont_user_nm,
+			cont_tel,
+			cont_price,
+			cont_margin,
+			dist_nm,
+			dist_user_nm,
+			dist_tel,
+			dist_price,
+			dist_margin,
+			cont_start_dt,
+			cont_end_dt,
+			tax_dt,
+			demand_condition,
+			order_condition,
+			tax,
+			securities,
+			completion,
+			user_id,
+			s_bill_cd,
+			s_collect_cd,
+			s_secur_cd,
+			o_bill_cd,
+			o_collect_cd,
+			o_secur_cd,
+			day1,
+			day2,
+			day3,
+			day4,
+			day5,
+			day6,
+			day7,
+			day8,
+			note1,
+			note2,
+			note3,
+			note4,
+			note5,
+			note6,
+			note7,
+			note8
+		)
+		VALUES
+		(
+			#{bid_notice_no},
+			#{bid_notice_cha_no},
+			#{bid_notice_nm},
+			#{order_agency_nm},
+			#{demand_nm},
+			#{demand_user_nm1},
+			#{demand_tel1},
+			#{demand_user_nm2},
+			#{demand_tel2},
+			#{cont_company_nm},
+			#{cont_user_nm},
+			#{cont_tel},
+			replace(#{cont_price},',',''),
+			#{cont_margin},
+			#{dist_nm},
+			#{dist_user_nm},
+			#{dist_tel},
+			replace(#{dist_price},',',''),
+			#{dist_margin},
+			replace(#{cont_start_dt},'-',''),
+			replace(#{cont_end_dt},'-',''),
+			replace(#{tax_dt},'-',''),
+			#{demand_condition},
+			#{order_condition},
+			#{tax},
+			#{securities},
+			#{completion},
+			#{user},
+			#{s_bill_cd},
+			#{s_collect_cd},
+			#{s_secur_cd},
+			#{o_bill_cd},
+			#{o_collect_cd},
+			#{o_secur_cd},
+			replace(#{day1},'-',''),
+			replace(#{day2},'-',''),
+			replace(#{day3},'-',''),
+			replace(#{day4},'-',''),
+			replace(#{day5},'-',''),
+			replace(#{day6},'-',''),
+			replace(#{day7},'-',''),
+			replace(#{day8},'-',''),
+			#{note1},
+			#{note2},
+			#{note3},
+			#{note4},
+			#{note5},
+			#{note6},
+			#{note7},
+			#{note8}
+		)
+	</insert>
+    <update id="updateProjectList" parameterType="map">
+		/* 프로젝트 수정  (project.updateProjectList) */	
+		UPDATE tn_bid_project_info
+		set
+		bid_notice_no =	#{bid_notice_no},
+		bid_notice_cha_no =	#{bid_notice_cha_no},
+		bid_notice_nm =	#{bid_notice_nm},
+		order_agency_nm =	#{order_agency_nm},
+		demand_nm =	#{demand_nm},
+		demand_user_nm1 = #{demand_user_nm1},
+		demand_tel1 = #{demand_tel1},
+		demand_user_nm2 = #{demand_user_nm2},
+		demand_tel2 = #{demand_tel2},
+		cont_company_nm = #{cont_company_nm},
+		cont_user_nm = #{cont_user_nm},
+		cont_tel = #{cont_tel},
+		cont_price = replace(#{cont_price},',',''),
+		cont_margin	= #{cont_margin},
+		dist_nm	= #{dist_nm},
+		dist_user_nm = #{dist_user_nm},
+		dist_tel = #{dist_tel},
+		dist_price	= replace(#{dist_price},',',''),
+		dist_margin	= #{dist_margin},
+		cont_start_dt	= replace(#{cont_start_dt},'-',''),
+		cont_end_dt	= replace(#{cont_end_dt},'-',''),
+		tax_dt	= replace(#{tax_dt},'-',''),
+		demand_condition	= #{demand_condition},
+		order_condition	= #{order_condition},
+		tax	= #{tax},
+		securities	= #{securities},
+		completion	= #{completion},
+		s_bill_cd = #{s_bill_cd},
+		s_collect_cd = #{s_collect_cd},
+		s_secur_cd = #{s_secur_cd},
+		o_bill_cd = #{o_bill_cd},
+		o_collect_cd = #{o_collect_cd},
+		o_secur_cd = #{o_secur_cd},
+		day1 = replace(#{day1},'-',''),
+		day2 = replace(#{day2},'-',''),
+		day3 = replace(#{day3},'-',''),
+		day4 = replace(#{day4},'-',''),
+		day5 = replace(#{day5},'-',''),
+		day6 = replace(#{day6},'-',''),
+		day7 = replace(#{day7},'-',''),
+		day8 = replace(#{day8},'-',''),
+		note1 = #{note1},
+		note2 = #{note2},
+		note3 = #{note3},
+		note4 = #{note4},
+		note5 = #{note5},
+		note6 = #{note6},
+		note7 = #{note7},
+		note8 = #{note8}
+		where project_id = #{project_id}
+	</update>
+	
+    <update id="updateProjectFileList" parameterType="map">
+	    /* 프로젝트 파일  (project.updateProjectFileList) */	
+	    UPDATE tn_bid_project_info
+		set
+			file_id1 =	#{file_id1},
+			file_id2 =	#{file_id2},
+			file_id3 =	#{file_id3},
+			file_id4 =	#{file_id4},
+			file_id5 =	#{file_id5},
+		user_id = user_id
+		where project_id = #{project_id}
+    </update>
+	
+    <delete id="deleteProjectDtlList" parameterType="map">
+	    /* 프로젝트 제조업체 삭제  (project.deleteProjectDtlList) */	
+		DELETE from tn_bid_project_dtl 
+		where project_id = #{project_id}
+		and project_dtl_id = #{project_dtl_id}
+	</delete>
+    <update id="updateProjectDtlList" parameterType="map">
+	    /* 프로젝트 제조업체 수정  (project.updateProjectDtlList) */	
+		update tn_bid_project_dtl
+		set make_company_nm = #{make_company_nm}
+		, make_price =  #{make_price}
+		, make_user_nm =  #{make_user_nm}
+		, make_tel =  #{make_tel}
+		, make_bigo =  #{make_bigo}
+		where project_id = #{project_id}
+		and project_dtl_id = #{project_dtl_id}
+	</update>
+    <insert id="insertProjectDtlList" parameterType="map">
+	    /* 프로젝트 제조업체 추가  (project.insertProjectDtlList) */	
+		insert into tn_bid_project_dtl 
+		(project_id, project_dtl_id, make_company_nm, make_price, make_user_nm, make_tel, make_bigo)
+		values( #{project_id}, 
+		       (select ifnull(max(project_dtl_id),0)+1 
+		        from tn_bid_project_dtl A
+		        where project_id =#{project_id} 
+		        ),
+		        #{make_company_nm},
+		        replace(#{make_price},',',''),
+		        #{make_user_nm},
+		        #{make_tel},
+		        #{make_bigo}
+		)
+	</insert>
+	
+    <delete id="deleteProjectScheduleList" parameterType="map">
+	    /* 프로젝트 진행사항 삭제  (project.deleteProjectScheduleList) */	
+		DELETE from tn_bid_project_schedule 
+		where project_id = #{project_id}
+		and schedule_id = #{schedule_id}
+	</delete>
+    <update id="updateProjectScheduleList" parameterType="map">
+	    /* 프로젝트 진행사항 수정  (project.updateProjectScheduleList) */	
+		update tn_bid_project_schedule
+		set project_start_dt = replace(#{project_start_dt},'-','')
+		, project_end_dt =  replace(#{project_end_dt},'-','')
+		, bigo = #{bigo}
+		, alarm = #{alarm}
+		where project_id = #{project_id}
+		and schedule_id = #{schedule_id}
+	</update>
+    <insert id="insertProjectScheduleList" parameterType="map">
+	    /* 프로젝트 진행사항 추가  (project.insertProjectScheduleList) */	
+		insert into tn_bid_project_schedule 
+		(project_id, schedule_id, project_start_dt, project_end_dt, bigo, alarm)
+		values( #{project_id}, 
+		       (select ifnull(max(schedule_id),0)+1 
+		        from tn_bid_project_schedule A
+		        where project_id =#{project_id} 
+		        ),
+		        replace(#{project_start_dt},'-',''),
+		        replace(#{project_end_dt},'-',''),
+		        #{bigo},
+		        #{alarm}
+		)
+	</insert>
+	
+    
+    <delete id="deleteProjectTaxList" parameterType="map">
+	    /* 프로젝트 매입매출 삭제  (project.deleteProjectTaxList) */	
+		DELETE from tn_bid_project_tax 
+		where project_id = #{project_id}
+		and tax_id = #{tax_id}
+	</delete>
+    <update id="updateProjectTaxList" parameterType="map">
+	    /* 프로젝트 매입매출 수정  (project.updateProjectTaxList) */	
+		update tn_bid_project_tax
+		set tax_dt = replace(#{tax_dt},'-','')
+		, sales = replace(#{sales},',','')
+		, purchase = replace(#{purchase},',','')
+		where project_id = #{project_id}
+		and tax_id = #{tax_id}
+	</update>
+    <insert id="insertProjectTaxList" parameterType="map">
+	    /* 프로젝트 매입매출 추가  (project.insertProjectTaxList) */	
+		insert into tn_bid_project_tax 
+		(project_id, tax_id, tax_dt, sales, purchase)
+		values( #{project_id}, 
+		       (select ifnull(max(tax_id),0)+1 
+		        from tn_bid_project_tax A
+		        where project_id =#{project_id} 
+		        ),
+		        replace(#{tax_dt},'-',''),
+		        replace(#{sales},',',''),
+		        replace(#{purchase},',','')
+		)
+	</insert>
+	
+    <select id="getUserProjectScheduleList" parameterType="map" resultType="HashMap">
+        /* 프로젝트 개별 일정  (project.getUserProjectScheduleList) */	
+        select  '' as bid_notice_no,
+        		'' as bid_notice_cha_no,
+        		'' as bid_notice_nm,
+        		'1' as resourceId,
+        		'#ffffff' as color,
+		       'holiday' as className,
+               cd_no as id, 
+               date_format(
+					concat(cast(cd_sy as char),
+					case when length(cast(cd_sm as char))=1 then concat('0',cast(cd_sm as char)) else cast(cd_sm as char) end,
+					case when length(cast(cd_sd as char))=1 then concat('0',cast(cd_sd as char)) else cast(cd_sd as char) end
+				),'%Y-%m-%d') as start,
+				date_format(adddate(date(concat(cast(cd_sy as char),
+					case when length(cast(cd_sm as char))=1 then concat('0',cast(cd_sm as char)) else cast(cd_sm as char) end,
+					case when length(cast(cd_sd as char))=1 then concat('0',cast(cd_sd as char)) else cast(cd_sd as char) end)), INTERVAL 1 DAY),'%Y-%m-%d') as end,
+               date_format(
+					concat(cast(cd_sy as char),
+					case when length(cast(cd_sm as char))=1 then concat('0',cast(cd_sm as char)) else cast(cd_sm as char) end,
+					case when length(cast(cd_sd as char))=1 then concat('0',cast(cd_sd as char)) else cast(cd_sd as char) end
+				),'%Y-%m-%d') as start_dt,
+				date_format(
+					concat(cast(cd_sy as char),
+					case when length(cast(cd_sm as char))=1 then concat('0',cast(cd_sm as char)) else cast(cd_sm as char) end,
+					case when length(cast(cd_sd as char))=1 then concat('0',cast(cd_sd as char)) else cast(cd_sd as char) end
+				),'%Y-%m-%d') as end_dt,
+               case when cd_lun_plan in ('석가탄신일','추석','설날') then cd_lun_plan else cd_sol_plan end as title,
+               cd_lun_plan as bigo 
+        from calenda_data
+        where (cd_sol_plan is not null or cd_lun_plan is not null or holiday = '1')
+		and holiday = '1'
+        
+		union
+        
+        select  A.bid_notice_no,
+        		A.bid_notice_cha_no,
+        		A.bid_notice_nm,
+        		'3' as resourceId,
+        		'#27a0c9' as color,
+		       '' as className,
+               B.project_id as id, 
+               date_format(B.project_start_dt,'%Y-%m-%d') as start, 
+               date_format(adddate(date(B.project_end_dt), INTERVAL 1 DAY),'%Y-%m-%d') as end,
+               date_format(B.project_start_dt,'%Y-%m-%d') as start_dt,
+			   date_format(B.project_end_dt,'%Y-%m-%d') as end_dt,
+               concat(B.bigo,' ',A.bid_notice_no,'-',A.bid_notice_cha_no) as title,
+               B.bigo 
+        from tn_bid_project_info A, tn_bid_project_schedule B
+		where A.project_id = B.project_id
+		and B.alarm = 'Y'
+		and length(A.user_id) > 0 
+<!-- 		union -->
+<!-- 		select A.bid_notice_no, -->
+<!-- 			   A.bid_notice_cha_no, -->
+<!-- 			   A.bid_notice_nm, -->
+<!-- 			   '2' as resourceId, -->
+<!-- 		       '#40a040' as color, -->
+<!-- 		       '' as className, -->
+<!-- 			   A.bid_notice_no as id,  -->
+<!-- 			   date_format(substr(bid_start_dt,1,8),'%Y-%m-%d') as start,  -->
+<!--                date_format(adddate(date(substr(bid_end_dt,1,8)), INTERVAL 1 DAY),'%Y-%m-%d') as end, -->
+<!-- 			   date_format(substr(bid_start_dt,1,8),'%Y-%m-%d') as start_dt, -->
+<!-- 			   date_format(substr(bid_end_dt,1,8),'%Y-%m-%d') as end_dt, -->
+<!-- 			   concat(A.bid_notice_no,'-',A.bid_notice_cha_no,' ', A.bid_notice_nm) as title, -->
+<!-- 			   '' as bigo  -->
+<!-- 		from tn_bid_notice_info A -->
+<!-- 		where length(A.user_id) > 0  -->
+<!-- 		and bid_start_dt is not null -->
+<!-- 		and bid_end_dt is not null -->
+		
+    </select>
+    
+    <delete id="deleteProjectList" parameterType="map" >
+        delete from tn_bid_project_info where project_id=#{project_id}
+    </delete>
+    <delete id="deleteProjectDtlAll" parameterType="map" >
+        delete from tn_bid_project_dtl where project_id=#{project_id}
+    </delete>
+    <delete id="deleteProjectScheduleAll" parameterType="map" >
+        delete from tn_bid_project_schedule where project_id=#{project_id}
+    </delete>
+    <delete id="deleteProjectTaxAll" parameterType="map" >
+        delete from tn_bid_project_tax where project_id=#{project_id}
+    </delete>
+    
+    <select id="selectProjectList3" parameterType="map" resultType="HashMap">
+	  /* 프로젝트 리스트 조회 (project.selectProjectList3) */	    
+	  select A.bid_notice_nm,
+		(select sum(sales) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'01')) as p1,
+		(select sum(sales) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'02')) as p2,
+		(select sum(sales) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'03')) as p3,
+		(select sum(sales) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'04')) as p4,
+		(select sum(sales) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'05')) as p5,
+		(select sum(sales) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'06')) as p6,
+		(select sum(sales) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'07')) as p7,
+		(select sum(sales) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'08')) as p8,
+		(select sum(sales) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'09')) as p9,
+		(select sum(sales) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'10')) as p10,
+		(select sum(sales) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'11')) as p11,
+		(select sum(sales) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'12')) as p12,
+		(select sum(sales) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,4) = #{year}) as pt,
+		(select sum(purchase) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'01')) as m1,
+		(select sum(purchase) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'02')) as m2,
+		(select sum(purchase) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'03')) as m3,
+		(select sum(purchase) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'04')) as m4,
+		(select sum(purchase) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'05')) as m5,
+		(select sum(purchase) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'06')) as m6,
+		(select sum(purchase) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'07')) as m7,
+		(select sum(purchase) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'08')) as m8,
+		(select sum(purchase) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'09')) as m9,
+		(select sum(purchase) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'10')) as m10,
+		(select sum(purchase) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,6) =concat(#{year},'11')) as m11,
+		(select sum(purchase) from tn_bid_project_tax C where C.project_id = A.project_id and substring(C.tax_dt,1,4) = #{year}) as mt
+		from tn_bid_project_info A, tn_bid_project_tax B
+		where A.project_id = B.project_id
+		and substring(B.tax_dt,1,4) = #{year}
+		group by A.project_id
+	</select>
+</mapper>

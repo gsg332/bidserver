@@ -1,0 +1,490 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.com.bidserver.manufacture.service.impl.ManufactureMapper">
+
+    <select id="selectManufactureList" parameterType="map" resultType="HashMap">
+	/* 제조사 정보 조회 (manufacture.selectManufactureList) */	    
+	  SELECT
+		    business_no,
+		    company_no,
+		    company_nm,
+		    delegate,
+		    delegate_explain,
+		    company_type,
+		    case when length(business_no) > 0 then '1' else '0' end company_type_insert,
+		    company_registration_day,
+		    address,
+		    fn_common_nm('main_area_cd',address, null, null) as address_nm, 
+		    address_detail,
+		    phone_no,
+		    mobile_no,
+		    fax_no,
+		    department,
+		    position,
+		    bidmanager,
+		    email,
+		    business_condition,
+		    business_condition_detail,
+		    zip_no,
+		    bigo,
+	  		unuse_yn
+		FROM tn_bid_company_info 
+		WHERE gubun='B'
+		    <if test="business_no!=null and !business_no.equals('')">  and business_no = #{business_no}            </if>
+		    <if test="s_company_no!=null and !s_company_no.equals('')">  and company_no like CONCAT('%', #{s_company_no}, '%')            </if>
+		    <if test="s_company_nm!=null and !s_company_nm.equals('')">  and company_nm like CONCAT('%', #{s_company_nm}, '%')            </if>
+		    <if test="s_area_cd!=null and !s_area_cd.equals('')">  and address = ${s_area_cd}           </if>
+			<if test="s_area_txt!=null and !s_area_txt.equals('')">  and address_detail like CONCAT('%', #{s_area_txt}, '%')            </if>
+			<if test="s_delegate_explain_txt!=null and !s_delegate_explain_txt.equals('')">  and delegate_explain like CONCAT('%', #{s_delegate_explain_txt}, '%')            </if>
+			<if test="s_company_type!=null and !s_company_type.equals('')">
+				and business_no in (select business_no from tn_bid_business_type where company_type_cd = #{s_company_type})
+			</if>
+			<if test="s_goods_type!=null and !s_goods_type.equals('')">
+				and business_no in (select business_no from tn_bid_business_goods where goods_no = #{s_goods_type})
+			</if>
+		ORDER BY company_nm asc
+		Limit #{pageNo}, #{rows}
+	</select>
+	
+    <select id="getManufactureListCnt" parameterType="map" resultType="Integer">
+		SELECT count(*) as cnt 
+		from tn_bid_company_info
+		WHERE gubun='B'
+		    <if test="s_company_no!=null and !s_company_no.equals('')">  and company_no like CONCAT('%', #{s_company_no}, '%')            </if>
+		       <if test="s_company_nm!=null and !s_company_nm.equals('')">  and company_nm like CONCAT('%', #{s_company_nm}, '%')            </if>
+		    <if test="s_area_cd!=null and !s_area_cd.equals('')">  and address = ${s_area_cd}           </if>
+			<if test="s_area_txt!=null and !s_area_txt.equals('')">  and address_detail like CONCAT('%', #{s_area_txt}, '%')            </if>
+			<if test="s_delegate_explain_txt!=null and !s_delegate_explain_txt.equals('')">  and delegate_explain like CONCAT('%', #{s_delegate_explain_txt}, '%')            </if>
+			<if test="s_company_type!=null and !s_company_type.equals('')">
+				and business_no in (select business_no from tn_bid_business_type where company_type_cd = #{s_company_type})
+			</if>
+			<if test="s_goods_type!=null and !s_goods_type.equals('')">
+				and business_no in (select business_no from tn_bid_business_goods where goods_no = #{s_goods_type})
+			</if>
+	</select>
+	
+     <update id="updateManufactureList" parameterType="map">
+	    /* 제조사 저장 (manufacture.updateManufactureList) */	    
+	  		INSERT INTO tn_bid_company_info
+					(
+					business_no,
+					company_no,
+					company_nm,
+					delegate,
+					delegate_explain,
+					company_type,
+					address,
+					address_detail,
+					phone_no,
+					mobile_no,
+					fax_no,
+					department,
+					position,
+					bidmanager,
+					email,
+					business_condition,
+					business_condition_detail,
+					zip_no,
+					unuse_yn,
+					gubun
+					)
+			VALUES
+				(			
+				   #{business_no},
+				   #{company_no},
+				   #{company_nm},
+				   #{delegate},
+				   #{delegate_explain},
+				   #{company_type},
+				   #{address},
+				   #{address_detail},
+				   #{phone_no},
+				   #{mobile_no},
+				   #{fax_no},
+				   #{department},
+				   #{position},
+				   #{bidmanager},
+				   #{email},
+				   #{business_condition},
+				   #{business_condition_detail},
+				   #{zip_no},
+				   #{unuse_yn},
+				   #{gubun}     				
+				)
+			on duplicate key
+			update
+			company_no 				= #{company_no},
+			company_nm 				= #{company_nm},
+			delegate 				= #{delegate},
+			delegate_explain 		= #{delegate_explain},
+			company_type 			= #{company_type},
+			address 				= #{address},
+			address_detail 			= #{address_detail},
+			phone_no 				= #{phone_no},
+			mobile_no 				= #{mobile_no},
+			fax_no 					= #{fax_no},
+			department				= #{department},
+			position 				= #{position},
+			bidmanager				= #{bidmanager},
+			email 					= #{email},
+			business_condition 		= #{business_condition},
+			business_condition_detail = #{business_condition_detail},
+			zip_no 					= #{zip_no},
+			unuse_yn 				= #{unuse_yn},
+			bigo 					= #{bigo}
+    </update>
+    
+     <delete id="deleteManufactureList" parameterType="map" >
+          /* 제조사 삭제 (manufacture.deleteManufactureList) */
+         DELETE from tn_bid_company_info 
+		where business_no = #{business_no}
+     </delete>
+	
+	
+	<select id="selectCompanyTypeList" parameterType="map" resultType="HashMap">
+	    /* 제조사 업종 조회 (manufacture.selectCompanyTypeList) */
+		     SELECT B.*, (select distinct(C.cd_nm) from tn_biz_gubun_info C where C.cd = B.parent_cd) as parent_nm
+	         FROM tn_bid_business_type A, tn_biz_gubun_info B
+	         WHERE A.company_type_cd = B.cd
+	         and B.del_yn = 'N'
+	         and B.depth = 2
+	         and A.business_no =  #{business_no}
+	        <if test="searchTxt!=null and !searchTxt.equals('')">  
+	            and (B.cd_nm like CONCAT('%', #{searchTxt}, '%')  or B.cd like CONCAT(#{searchTxt}, '%')    )        
+	        </if>
+	     	order by parent_cd asc, cd asc		    
+	</select>
+		
+	<select id="selectCompanyTypeTotalList" parameterType="map" resultType="HashMap">
+		 /* 업종 조회 (manufacture.selectCompanyTypeTotalList) */
+			 SELECT B.*, (select distinct(C.cd_nm) from tn_biz_gubun_info C where C.cd = B.parent_cd) as parent_nm
+	         FROM tn_biz_gubun_info B
+	         WHERE 1=1
+	         and del_yn = 'N'
+	         and depth = 2
+	        <if test="searchTxt2!=null and !searchTxt2.equals('')">  
+	            and B.cd_nm like CONCAT('%', #{searchTxt2}, '%')       
+	        </if>
+	        <if test="searchTxt3!=null and !searchTxt3.equals('')">  
+	            and B.cd like CONCAT(#{searchTxt3}, '%')     
+	        </if>
+	     	order by parent_cd asc, cd asc
+        
+		 Limit #{pageNo}, #{rows}  
+	</select>
+		
+	<select id="getCompanyTypeTotalCnt" parameterType="map" resultType="Integer">
+		 /* 업종 총 갯수 조회 (manufacture.getCompanyTypeTotalCnt) */
+	     SELECT count(*) as cnt
+         FROM tn_biz_gubun_info B
+         WHERE 1=1
+         and del_yn = 'N'
+         and depth = 2
+        <if test="searchTxt2!=null and !searchTxt2.equals('')">  
+            and B.cd_nm like CONCAT('%', #{searchTxt2}, '%')       
+        </if>
+        <if test="searchTxt3!=null and !searchTxt3.equals('')">  
+            and B.cd like CONCAT(#{searchTxt3}, '%')     
+        </if>
+	</select>
+	
+	<update id="removeBizCompanyTypeList" parameterType="map">
+		 /* 제조사 업종 삭제 (manufacture.removeBizCompanyTypeList) */
+	     DELETE from tn_bid_business_type
+         WHERE company_type_cd = #{cd}
+         and business_no =  #{business_no}
+	</update>
+	
+	<update id="updateBizCompanyTypeList" parameterType="map">
+	        /* 제조사 업종 등록 (manufacture.updateBizCompanyTypeList) */
+		    insert into tn_bid_business_type
+		    (
+		    business_no,
+		    company_type_cd,
+		    create_dt,
+		    modify_dt
+		    )
+		    value(
+		    #{business_no},
+		    #{cd},
+		    sysdate(),
+		    sysdate()
+		    )
+		    on duplicate key
+			update
+			modify_dt=sysdate()
+	</update>
+		
+	<select id="selectGoodsTypeList" parameterType="map" resultType="HashMap">
+	    /* 제조사 물품 조회 (manufacture.selectGoodsTypeList) */
+		 SELECT B.*
+         FROM tn_bid_business_goods A, tn_bid_goods_info B
+         WHERE A.goods_no = B.goods_no
+         and A.business_no =  #{business_no}
+        <if test="searchTxt!=null and !searchTxt.equals('')">  
+            and (B.goods_nm like CONCAT('%', #{searchTxt}, '%')  or B.goods_no like CONCAT(#{searchTxt}, '%')    )        
+        </if>
+        
+        <trim prefix="ORDER BY">
+	        <choose>
+			    <when test="sort != null and sort!=''">
+					<if test="sort.equals('goods_no')"> B.goods_no</if>
+				    <if test="sort.equals('goods_nm')"> B.goods_nm</if>
+					<if test="order!=null and order.equals('desc')"> desc </if>
+					<if test="order!=null and order.equals('asc')"> asc </if>
+			    </when>
+			</choose>
+           </trim> 
+		    
+	</select>
+		
+	<select id="selectGoodsTypeTotalList" parameterType="map" resultType="HashMap">
+		 /* 물품 조회 (manufacture.selectGoodsTypeTotalList) */
+	     SELECT B.*
+         FROM tn_bid_goods_info B
+         WHERE 1=1
+        <if test="searchTxt2!=null and !searchTxt2.equals('')">  
+            and B.goods_nm like CONCAT('%', #{searchTxt2}, '%')       
+        </if>
+        <if test="searchTxt3!=null and !searchTxt3.equals('')">  
+            and B.goods_no like CONCAT(#{searchTxt3}, '%')     
+        </if>
+        
+        <trim prefix="ORDER BY">
+	        <choose>
+			    <when test="sort != null and sort!=''">
+					<if test="sort.equals('goods_no')"> B.goods_no</if>
+				    <if test="sort.equals('goods_nm')"> B.goods_nm</if>
+					<if test="order!=null and order.equals('desc')"> desc </if>
+					<if test="order!=null and order.equals('asc')"> asc </if>
+			    </when>
+			</choose>
+           </trim> 
+		 Limit #{pageNo}, #{rows}  
+	</select>
+		
+	<select id="getGoodsTypeTotalCnt" parameterType="map" resultType="Integer">
+		 /* 물품 총 갯수 조회 (manufacture.getGoodsTypeTotalCnt) */
+	     SELECT count(*) as cnt
+         FROM tn_bid_goods_info B
+         WHERE 1=1
+        <if test="searchTxt2!=null and !searchTxt2.equals('')">  
+            and B.goods_nm like CONCAT('%', #{searchTxt2}, '%')       
+        </if>
+        <if test="searchTxt3!=null and !searchTxt3.equals('')">  
+            and B.goods_no like CONCAT(#{searchTxt3}, '%')     
+        </if>
+	</select>
+	
+	<update id="removeBizGoodsTypeList" parameterType="map">
+		 /* 제조사 물품 삭제 (manufacture.removeBizGoodsTypeList) */
+	     DELETE from tn_bid_business_goods
+         WHERE goods_no = #{goods_no}
+         and business_no =  #{business_no}
+	</update>
+	
+	<update id="updateBizGoodsTypeList" parameterType="map">
+	        /* 제조사 물품 등록 (manufacture.updateBizGoodsTypeList) */
+		    insert into tn_bid_business_goods
+		    (
+		    business_no,
+		    goods_no,
+		    create_dt,
+		    modify_dt
+		    )
+		    value(
+		    #{business_no},
+		    #{goods_no},
+		    sysdate(),
+		    sysdate()
+		    )
+		    on duplicate key
+			update
+			modify_dt=sysdate()
+	</update>
+	
+	<select id="selectGoodsDirectList" parameterType="map" resultType="HashMap">
+	    /* 제조사 직생물품 조회 (manufacture.selectGoodsDirectList) */
+		 SELECT B.*
+         FROM tn_bid_business_goods_direct A, tn_bid_goods_info B
+         WHERE A.goods_no = B.goods_no
+         and A.business_no =  #{business_no}
+        <if test="searchTxt!=null and !searchTxt.equals('')">  
+            and (B.goods_nm like CONCAT('%', #{searchTxt}, '%')  or B.goods_no like CONCAT(#{searchTxt}, '%')    )        
+        </if>
+        
+        <trim prefix="ORDER BY">
+	        <choose>
+			    <when test="sort != null and sort!=''">
+					<if test="sort.equals('goods_no')"> B.goods_no</if>
+				    <if test="sort.equals('goods_nm')"> B.goods_nm</if>
+					<if test="order!=null and order.equals('desc')"> desc </if>
+					<if test="order!=null and order.equals('asc')"> asc </if>
+			    </when>
+			</choose>
+           </trim> 
+		    
+	</select>
+		
+	<select id="selectGoodsDirectTotalList" parameterType="map" resultType="HashMap">
+		 /* 직생물품 조회 (manufacture.selectGoodsDirectTotalList) */
+	     SELECT B.*
+         FROM tn_bid_goods_info B
+         WHERE 1=1
+        <if test="searchTxt2!=null and !searchTxt2.equals('')">  
+            and B.goods_nm like CONCAT('%', #{searchTxt2}, '%')       
+        </if>
+        <if test="searchTxt3!=null and !searchTxt3.equals('')">  
+            and B.goods_no like CONCAT(#{searchTxt3}, '%')     
+        </if>
+        
+        <trim prefix="ORDER BY">
+	        <choose>
+			    <when test="sort != null and sort!=''">
+					<if test="sort.equals('goods_no')"> B.goods_no</if>
+				    <if test="sort.equals('goods_nm')"> B.goods_nm</if>
+					<if test="order!=null and order.equals('desc')"> desc </if>
+					<if test="order!=null and order.equals('asc')"> asc </if>
+			    </when>
+			</choose>
+           </trim> 
+		 Limit #{pageNo}, #{rows}  
+	</select>
+		
+	<select id="getGoodsDirectTotalCnt" parameterType="map" resultType="Integer">
+		 /* 직생물품 총 갯수 조회 (manufacture.getGoodsDirectTotalCnt) */
+	     SELECT count(*) as cnt
+         FROM tn_bid_goods_info B
+         WHERE 1=1
+        <if test="searchTxt2!=null and !searchTxt2.equals('')">  
+            and B.goods_nm like CONCAT('%', #{searchTxt2}, '%')       
+        </if>
+        <if test="searchTxt3!=null and !searchTxt3.equals('')">  
+            and B.goods_no like CONCAT(#{searchTxt3}, '%')     
+        </if>
+	</select>
+	
+	<update id="removeBizGoodsDirectList" parameterType="map">
+		 /* 제조사 직생물품 삭제 (manufacture.removeBizGoodsDirectList) */
+	     DELETE from tn_bid_business_goods_direct
+         WHERE goods_no = #{goods_no}
+         and business_no =  #{business_no}
+	</update>
+	
+	<update id="updateManufactureBigo" parameterType="map">
+		 /* 제조사 의견 등록 (manufacture.updateManufactureBigo) */
+	     update tn_bid_company_info
+	     set bigo = #{bigo}
+         WHERE business_no =  #{business_no}
+	</update>
+	
+	<update id="updateBizGoodsDirectList" parameterType="map">
+	        /* 제조사 직생물품 등록 (manufacture.updateBizGoodsDirectList) */
+		    insert into tn_bid_business_goods_direct
+		    (
+		    business_no,
+		    goods_no,
+		    create_dt,
+		    modify_dt
+		    )
+		    value(
+		    #{business_no},
+		    #{goods_no},
+		    sysdate(),
+		    sysdate()
+		    )
+		    on duplicate key
+			update
+			modify_dt=sysdate()
+	</update>
+	
+	<select id="selectBizHisList" parameterType="map" resultType="HashMap">
+		 /* 견적이력 조회 (manufacture.selectBizHisList) */
+	     select A.*, B.*, B.bigo as bigo1 
+		 from 	tn_bid_notice_info A,
+		 		tn_bid_manufacture_rel B
+		 where A.bid_notice_no = B.bid_notice_no
+		 and A.bid_notice_cha_no = B.bid_notice_cha_no
+		 and B.send_yn = 'Y'
+	     and B.business_no = #{business_no}
+	     
+	     <trim prefix="ORDER BY">
+	        <choose>
+			    <when test="sort != null and sort!=''">
+					<if test="sort.equals('bid_notice_no')"> A.bid_notice_no</if>
+				    <if test="sort.equals('bid_notice_nm')"> A.bid_notice_nm</if>
+				    <if test="sort.equals('noti_dt')"> A.noti_dt</if>
+				    <if test="sort.equals('margin')"> B.margin</if>
+				    <if test="sort.equals('bigo1')"> B.bigo</if>
+					<if test="order!=null and order.equals('desc')"> desc </if>
+					<if test="order!=null and order.equals('asc')"> asc </if>
+			    </when>
+			</choose>
+           </trim> 
+	</select>
+	
+	<select id="selectBidReportList" parameterType="map" resultType="HashMap">
+		 /* 견적보고서 조회 (manufacture.selectBidReportList) */
+	     SELECT  (select user_nm from tn_user_info where user_id=A.user_id) user_nm,
+				(select user_nm from tn_user_info where user_id=C.apply_user_id1) user_nm1,
+				(select user_nm from tn_user_info where user_id=C.apply_user_id2) user_nm2,
+				(select user_nm from tn_user_info where user_id=C.apply_user_id3) user_nm3,
+				date_format(c.apply_dt1,'%Y.%m.%d %H:%i:%S') apply_dt_nm1,
+				date_format(c.apply_dt2,'%Y.%m.%d %H:%i:%S') apply_dt_nm2,
+				date_format(c.apply_dt3,'%Y.%m.%d %H:%i:%S') apply_dt_nm3,
+				fn_common_nm('apply_status_cd',status_cd1, null, null) status_nm1,
+				fn_common_nm('apply_status_cd',status_cd2, null, null) status_nm2,
+				fn_common_nm('apply_status_cd',status_cd3, null, null) status_nm3,
+				A.*,B.*,C.*
+		from 
+		tn_bid_notice_info A
+		left outer join
+		tn_bid_notice_file B
+		on A.bid_notice_no = B.bid_notice_no  
+		and A.bid_notice_cha_no = B.bid_notice_cha_no
+		,tn_bid_apply_info C
+		,tn_bid_manufacture_rel D
+		where  A.bid_notice_no = C.bid_notice_no  
+		and A.bid_notice_cha_no = C.bid_notice_cha_no
+		and A.bid_notice_no = D.bid_notice_no
+		and A.bid_notice_cha_no = D.bid_notice_cha_no
+		and D.business_no = #{business_no}
+		<trim prefix="ORDER BY">
+	        <choose>
+			    <when test="sort != null and sort!=''">
+					<if test="sort.equals('bid_notice_nm')"> A.bid_notice_nm</if>
+				    <if test="sort.equals('bid_notice_no')"> A.bid_notice_no</if>
+					<if test="sort.equals('noti_dt')">A.noti_dt </if>
+					<if test="sort.equals('demand_nm')">A.demand_nm </if>
+					<if test="sort.equals('bid_start_dt')">A.bid_start_dt </if>
+					<if test="sort.equals('bid_end_dt')">A.bid_end_dt </if>
+					<if test="sort.equals('contract_type_nm')">A.contract_type_nm </if>
+			    </when>
+			</choose>
+           </trim> 
+	</select>
+	
+	<select id="selectGoodsTypeList2" parameterType="map" resultType="HashMap">
+	    /* 공공구매정보망 기업 제조물품 리스트 (manufacture.selectGoodsTypeList2) */
+		 SELECT B.*
+         FROM tn_order_business_goods A, tn_bid_goods_info B
+         WHERE A.goods_no = B.goods_no
+         and A.business_no =  #{business_no}
+        <if test="searchTxt!=null and !searchTxt.equals('')">  
+            and (B.goods_nm like CONCAT('%', #{searchTxt}, '%')  or B.goods_no like CONCAT(#{searchTxt}, '%')    )        
+        </if>
+        
+        <trim prefix="ORDER BY">
+	        <choose>
+			    <when test="sort != null and sort!=''">
+					<if test="sort.equals('goods_no')"> B.goods_no</if>
+				    <if test="sort.equals('goods_nm')"> B.goods_nm</if>
+					<if test="order!=null and order.equals('desc')"> desc </if>
+					<if test="order!=null and order.equals('asc')"> asc </if>
+			    </when>
+			</choose>
+           </trim> 
+		    
+	</select>
+</mapper>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.com.bidserver.analysis.service.impl.AnalysisMapper">
+	
+	<select id="selectBusinessBidInfoList" parameterType="map" resultType="HashMap">
+	/* 투찰사 투찰 이력 조회 (Business.selectBusinessBidInfoList) */	    
+	  SELECT
+		    A.business_no,
+		    A.company_no,
+		    A.company_nm, 
+			(
+				select count(*) as cnt 
+				from tn_bid_business_rel B1,
+					 tn_bid_distribution_info B2,
+					 tn_bid_apply_info B3
+				where B1.bid_notice_no = B2.bid_notice_no
+				and B1.bid_notice_cha_no = B2.bid_notice_cha_no
+				and B2.bid_notice_no = B3.bid_notice_no
+				and B2.bid_notice_cha_no = B3.bid_notice_cha_no
+				and B3.status_cd3 ='002'
+				<if test="bidStartDt!=null and !bidStartDt.equals('')">  and date_format(substr(B2.bid_end_dt,1,8),'%Y%m%d') <![CDATA[>=]]> date_format(#{bidStartDt},'%Y%m%d')  </if>
+				<if test="bidEndDt!=null and !bidEndDt.equals('')">  and date_format(substr(B2.bid_end_dt,1,8),'%Y%m%d') <![CDATA[<=]]> date_format(#{bidEndDt},'%Y%m%d')             </if>
+				and B1.business_no = A.business_no
+				)  as cnt,
+			(
+				select count(*) as cnt 
+				from tn_bid_open_result_compt B1, tn_bid_distribution_info B2, tn_bid_apply_info B3, tn_bid_business_rel B4
+				where B1.bid_notice_no = B2.bid_notice_no 
+				and B1.bid_notice_cha_no = B2.bid_notice_cha_no 
+				and B2.bid_notice_no = B3.bid_notice_no 
+				and B2.bid_notice_cha_no = B3.bid_notice_cha_no 
+				and B3.status_cd3 ='002' 
+				and B2.bid_notice_no = B4.bid_notice_no 
+				and B2.bid_notice_cha_no = B4.bid_notice_cha_no
+    			and B4.business_no = A.business_no 
+				<if test="bidStartDt!=null and !bidStartDt.equals('')">  and date_format(substr(B2.bid_end_dt,1,8),'%Y%m%d') <![CDATA[>=]]> date_format(#{bidStartDt},'%Y%m%d')  </if>
+				<if test="bidEndDt!=null and !bidEndDt.equals('')">  and date_format(substr(B2.bid_end_dt,1,8),'%Y%m%d') <![CDATA[<=]]> date_format(#{bidEndDt},'%Y%m%d')             </if>
+				and B1.biz_reg_no = replace(A.company_no,'-','')
+				)  as cnt1
+		FROM tn_bid_company_info A
+		WHERE gubun='A'
+		<if test="s_business_no!=null and !s_business_no.equals('')">  and A.business_no like CONCAT('%', #{s_business_no}, '%')            </if>
+	    <if test="s_company_no!=null and !s_company_no.equals('')">  and A.company_no like CONCAT('%', #{s_company_no}, '%')            </if>
+	    <if test="s_company_nm!=null and !s_company_nm.equals('')">  and A.company_nm like CONCAT('%', #{s_company_nm}, '%')            </if>
+		GROUP BY A.business_no,
+				 A.company_no,
+				 A.company_nm
+		ORDER BY company_nm asc
+		Limit #{pageNo}, #{rows}
+	</select>
+	
+    <select id="getBusinessBidInfoListCnt" parameterType="map" resultType="Integer">
+		/* 투찰사 투찰 이력 갯수 (Business.getBusinessBidInfoListCnt) */	    
+        SELECT
+		    count(*)
+		FROM tn_bid_company_info A
+		WHERE gubun='A'
+		<if test="s_business_no!=null and !s_business_no.equals('')">  and A.business_no like CONCAT('%', #{s_business_no}, '%')            </if>
+	    <if test="s_company_no!=null and !s_company_no.equals('')">  and A.company_no like CONCAT('%', #{s_company_no}, '%')            </if>
+	    <if test="s_company_nm!=null and !s_company_nm.equals('')">  and A.company_nm like CONCAT('%', #{s_company_nm}, '%')            </if>
+	</select> 
+	
+    <select id="selectBusinessBidInfoDtlList" parameterType="map" resultType="HashMap">
+	/* 투찰사 투찰 이력상세 조회 (Business.selectBusinessBidInfoDtlList) */	    
+		select * 
+		from
+		(select A.bid_notice_no, A.bid_notice_cha_no, A.bid_notice_nm, A.bid_end_dt, B.business_no, B.company_nm, B.company_no 
+		from tn_bid_distribution_info A,
+			 tn_bid_company_info B,
+		     tn_bid_business_rel C,
+		     tn_bid_apply_info D
+		where A.bid_notice_no = C.bid_notice_no
+		and A.bid_notice_cha_no = C.bid_notice_cha_no
+		and A.bid_notice_no = D.bid_notice_no
+		and A.bid_notice_cha_no = D.bid_notice_cha_no
+		and B.business_no = C.business_no
+		and B.gubun = 'A'
+		and D.status_Cd3 ='002'
+		<if test="bidStartDt!=null and !bidStartDt.equals('')">  and date_format(substr(A.bid_end_dt,1,8),'%Y%m%d') <![CDATA[>=]]> date_format(#{bidStartDt},'%Y%m%d')  </if>
+		<if test="bidEndDt!=null and !bidEndDt.equals('')">  and date_format(substr(A.bid_end_dt,1,8),'%Y%m%d') <![CDATA[<=]]> date_format(#{bidEndDt},'%Y%m%d')             </if>
+		and B.business_no=#{business_no}) A
+		left outer join 
+		tn_bid_open_result_compt B
+		on A.bid_notice_no = B.bid_notice_no
+		and A.bid_notice_cha_no = B.bid_notice_cha_no
+		and replace(A.company_no,'-','') = B.biz_reg_no
+		order by A.bid_end_dt desc
+	</select>
+	
+	<select id="selectKpiList" parameterType="map" resultType="HashMap">
+		Select Ifnull(A.User_Id,'') as user_id, Count(Ifnull(A.User_Id,'')) as user_cnt, case when a.user_id = 'non' then '미지정' else user_nm end as user_nm  
+		From tn_bid_distribution_info A Left Outer Join tn_user_info B On A.User_Id = B.User_Id 
+		WHERE A.User_Id != ''
+		<if test="disSDt!=null and !disSDt.equals('')">  and date_format(A.create_dt,'%Y%m%d') <![CDATA[>=]]> date_format(#{disSDt},'%Y%m%d')  </if>
+		<if test="disEDt!=null and !disEDt.equals('')">  and date_format(A.create_dt,'%Y%m%d') <![CDATA[<=]]> date_format(#{disEDt},'%Y%m%d')  </if>
+		Group By A.User_Id
+	</select>
+	
+	<select id="selectBusinessBidCnt" parameterType="map" resultType="int">
+	    /* 이벤트 누적 투찰 개수 (mobile-Sql-Map.selectBusinessBidCnt) */	
+		SELECT COUNT(*)
+		FROM tn_bid_business_rel A, 
+			(
+				SELECT *
+				FROM tn_event_info
+				ORDER BY reg_date DESC
+				LIMIT 1
+			) B
+		WHERE A.bid_yn = 'Y'
+		AND A.business_no = #{business_no}
+		AND A.bid_dt &gt;= B.start_date
+		AND A.bid_dt &lt;= B.end_date
+	</select>
+	
+	<select id="selectLastEventInfo" parameterType="map" resultType="map">
+	    /* 최근 이벤트 정보 (mobile-Sql-Map.selectLastEventInfo) */	
+		SELECT *
+		FROM tn_event_info
+		ORDER BY reg_date DESC
+		LIMIT 1
+	</select>
+
+</mapper>

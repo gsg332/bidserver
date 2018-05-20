@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.com.bidserver.mobile.service.impl.MobileWebMapper">
+
+	<select id="getLogin"  parameterType="map"  resultType="HashMap">		
+	/* 투찰사 정보 조회 (mobile-Sql-Map.getLogin) */	    
+	  SELECT
+		    *
+		FROM tn_bid_company_info WHERE business_no = #{business_no}
+		and unuse_yn != 'Y'
+		
+    </select>
+    
+	<select id="selectBusinessBidList" parameterType="map" resultType="HashMap">
+		/* 투찰사 입찰공고 리스트 (mobile-Sql-Map.selectBusinessBidList) */	
+		SELECT C.chk_dt,
+		C.bidding_price, C.bigo as company_bigo, A.*,B.*, (select user_nm from tn_user_info where user_id=A.user_id) as user_nm,
+		case when substr(A.bid_end_dt,1,10)  <![CDATA[<]]> date_format(sysdate(),'%Y%m%d%H') then 'F' else
+			case when substr(A.bid_start_dt,1,10) <![CDATA[<=]]> date_format(sysdate(),'%Y%m%d%H') then 'C' else 'B' end
+		end as finish_status
+		from tn_bid_notice_info A
+		left outer join
+		tn_bid_notice_file B
+		on A.bid_notice_no = B.bid_notice_no  
+		and A.bid_notice_cha_no = B.bid_notice_cha_no
+		,tn_bid_business_rel C
+		where A.bid_notice_no = C.bid_notice_no 
+		and A.bid_notice_cha_no = C.bid_notice_cha_no
+		and C.business_no = #{business_no}
+		and date_format(substr(bid_end_dt,1,8),'%Y%m%d') >= date_format(adddate(sysdate(),-3),'%Y%m%d') 
+		order by A.bid_end_dt desc
+		Limit #{pageNo}, #{rows}
+	</select>
+	
+	<update id="updateRegId" parameterType="map">
+	    UPDATE tn_bid_company_info
+	    set reg_id = #{regId}
+	    where business_no = #{business_no}
+	</update>
+	
+	<update id="updateChkDt" parameterType="map">
+	    UPDATE tn_bid_business_rel
+	    set chk_dt = sysdate()
+	    where business_no = #{business_no}
+	    and bid_notice_no = #{bid_notice_no}
+	    and bid_notice_cha_no = #{bid_notice_cha_no}
+	</update>
+	
+	<select id="selectNotiList" parameterType="map" resultType="HashMap">
+		/* 공지사항 리스트 (mobile-Sql-Map.selectNotiList) */	
+		SELECT notice_id, title, context, open_yn, create_id,
+		 (select user_nm from tn_user_info where user_id=A.create_id) as user_nm,
+		 date_format(create_dt,'%Y.%m.%d %H:%i:%S') as create_dt 
+		from tn_notice_info A
+		where open_yn='Y'
+		order by create_dt desc
+		Limit #{pageNo}, #{rows}
+	</select>
+	
+	<select id="getVersion" parameterType="map" resultType="String">
+		/* 버전정보  (mobile-Sql-Map.getVersion) */	
+		SELECT ver
+		from tn_bid_mobile_info
+		where dtype = #{dtype}
+	</select>
+	
+	<select id="getBidDetailInfo1" parameterType="map" resultType="HashMap">
+		/* 투찰사 입찰공고 리스트 (mobile-Sql-Map.getBidDetailInfo1) */	
+		SELECT C.bidding_price, C.bigo as company_bigo, A.*,B.*, (select user_nm from tn_user_info where user_id=A.user_id) as user_nm
+		from tn_bid_notice_info A
+		left outer join
+		tn_bid_notice_file B
+		on A.bid_notice_no = B.bid_notice_no  
+		and A.bid_notice_cha_no = B.bid_notice_cha_no
+		,tn_bid_business_rel C
+		where A.bid_notice_no = C.bid_notice_no 
+		and A.bid_notice_cha_no = C.bid_notice_cha_no
+		and A.bid_notice_no = #{bidNoticeNo}
+		and A.bid_notice_cha_no = #{bidNoticeChaNo}
+		and C.business_no = #{business_no}
+	</select>
+</mapper>

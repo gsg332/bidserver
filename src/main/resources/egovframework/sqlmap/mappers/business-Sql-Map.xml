@@ -1,0 +1,616 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.com.bidserver.business.service.impl.BusinessMapper">
+
+    <select id="selectBusinessList" parameterType="map" resultType="HashMap">
+	/* 투찰사 정보 조회 (Business.selectBusinessList) */	    
+	  SELECT
+		    business_no,
+		    company_no,
+		    company_nm,
+		    delegate,
+		    delegate_explain,
+		    company_type,
+		    case when length(business_no) > 0 then '1' else '0' end company_type_insert,
+		    company_registration_day,
+		    address,
+		    fn_common_nm('main_area_cd',address, null, null) as address_nm, 
+		    address_detail,
+		    phone_no,
+		    mobile_no,
+		    fax_no,
+		    department,
+		    position,
+		    bidmanager,
+		    email,
+		    business_condition,
+		    business_condition_detail,
+		    zip_no,
+		    file_id1,
+		    file_id2,
+		    file_id3,
+		    file_id4,
+		    fn_file_nm(file_id1) as file_nm1,
+	  		fn_file_nm(file_id2) as file_nm2,
+	  		fn_file_nm(file_id3) as file_nm3,
+	  		fn_file_nm(file_id4) as file_nm4,
+	  		msg_info1,
+	  		msg_info2,
+	  		msg_info3,
+	  		pwd,
+	  		unuse_yn
+		FROM tn_bid_company_info 
+		WHERE gubun='A'
+		    <if test="s_business_no!=null and !s_business_no.equals('')">  and business_no like CONCAT('%', #{s_business_no}, '%')            </if>
+		    <if test="s_company_no!=null and !s_company_no.equals('')">  and company_no like CONCAT('%', #{s_company_no}, '%')            </if>
+		    <if test="s_company_nm!=null and !s_company_nm.equals('')">  and company_nm like CONCAT('%', #{s_company_nm}, '%')            </if>
+		    <if test="s_area_cd!=null and !s_area_cd.equals('')">  and address like CONCAT('%', #{s_area_cd}, '%')            </if>
+		    <if test="s_area_txt!=null and !s_area_txt.equals('')">  and address_detail like CONCAT('%', #{s_area_txt}, '%')            </if>
+			<if test="s_company_type!=null and !s_company_type.equals('')">
+				and business_no in (select business_no from tn_bid_business_type where company_type_cd = #{s_company_type})
+			</if>
+			<if test="s_goods_type!=null and !s_goods_type.equals('')">
+				and business_no in (select business_no from tn_bid_business_goods where goods_no = #{s_goods_type})
+			</if>
+			<if test="s_goods_direct!=null and !s_goods_direct.equals('')">
+				and business_no in (select business_no from tn_bid_business_goods_direct where goods_no = #{s_goods_direct})
+			</if>
+		ORDER BY company_nm asc
+		Limit #{pageNo}, #{rows}
+	</select>
+	
+    <select id="getBusinessListCnt" parameterType="map" resultType="Integer">
+		SELECT count(*) as cnt 
+		from tn_bid_company_info
+		WHERE gubun='A'
+		    <if test="s_company_no!=null and !s_company_no.equals('')">  and company_no like CONCAT('%', #{s_company_no}, '%')            </if>
+		    <if test="s_company_nm!=null and !s_company_nm.equals('')">  and company_nm like CONCAT('%', #{s_company_nm}, '%')            </if>
+		    <if test="s_area_cd!=null and !s_area_cd.equals('')">  and address like CONCAT('%', #{s_area_cd}, '%')            </if>
+			<if test="s_area_txt!=null and !s_area_txt.equals('')">  and address_detail like CONCAT('%', #{s_area_txt}, '%')            </if>
+			<if test="s_company_type!=null and !s_company_type.equals('')">
+				and business_no in (select business_no from tn_bid_business_type where company_type_cd = #{s_company_type})
+			</if>
+			<if test="s_goods_type!=null and !s_goods_type.equals('')">
+				and business_no in (select business_no from tn_bid_business_goods where goods_no = #{s_goods_type})
+			</if>
+			<if test="s_goods_direct!=null and !s_goods_direct.equals('')">
+				and business_no in (select business_no from tn_bid_business_goods_direct where goods_no = #{s_goods_direct})
+			</if>
+	</select>
+	
+     <update id="updateBusinessList" parameterType="map">
+	    /* 투찰사 저장 (Business.updateBusinessList) */	    
+	  		INSERT INTO tn_bid_company_info
+					(
+					business_no,
+					company_no,
+					company_nm,
+					delegate,
+					delegate_explain,
+					company_type,
+					address,
+					address_detail,
+					phone_no,
+					mobile_no,
+					fax_no,
+					department,
+					position,
+					bidmanager,
+					email,
+					business_condition,
+					business_condition_detail,
+					zip_no,
+					gubun,
+					unuse_yn,
+					pwd,
+					msg_info1,
+					msg_info2,
+					msg_info3
+					)
+			VALUES
+				(			
+				   #{business_no},
+				   #{company_no},
+				   #{company_nm},
+				   #{delegate},
+				   #{delegate_explain},
+				   #{company_type},
+				   #{address},
+				   #{address_detail},
+				   #{phone_no},
+				   #{mobile_no},
+				   #{fax_no},
+				   #{department},
+				   #{position},
+				   #{bidmanager},
+				   #{email},
+				   #{business_condition},
+				   #{business_condition_detail},
+				   #{zip_no},
+				   #{gubun},
+				   #{unuse_yn},
+				   <if test="pwd!=null and !pwd.equals('')">  
+					   #{pwd},     				
+				   </if>
+				   <if test="pwd==null">  
+					   replace(#{mobile_no},'-',''),     				
+				   </if>
+				   #{msg_info1},
+				   #{msg_info2},
+				   #{msg_info3}
+				)
+			on duplicate key
+			update
+			company_no 				= #{company_no},
+			company_nm 				= #{company_nm},
+			delegate 				= #{delegate},
+			delegate_explain 		= #{delegate_explain},
+			company_type 			= #{company_type},
+			address 				= #{address},
+			address_detail 			= #{address_detail},
+			phone_no 				= #{phone_no},
+			mobile_no 				= #{mobile_no},
+			fax_no 					= #{fax_no},
+			department				= #{department},
+			position 				= #{position},
+			bidmanager				= #{bidmanager},
+			email 					= #{email},
+			business_condition 		= #{business_condition},
+			business_condition_detail = #{business_condition_detail},
+			zip_no 					= #{zip_no},
+			bigo 					= #{bigo},
+			unuse_yn 					= #{unuse_yn},
+			pwd						= #{pwd}, 
+			msg_info1 					= #{msg_info1},
+			msg_info2 					= #{msg_info2},
+			msg_info3 					= #{msg_info3}
+    </update>
+    
+     <delete id="deleteBusinessList" parameterType="map" >
+          /* 투찰사 삭제 (Business.deleteBusinessList) */
+         DELETE from tn_bid_company_info 
+		where business_no = #{business_no}
+     </delete>
+     
+       <select id="selectBusinessDtlList" parameterType="map" resultType="HashMap">
+	/* 투찰사 정보 조회 (Business.selectBusinessDtlList) */	    
+	  SELECT
+		    A.business_no,
+		    A.company_no,
+		    A.company_nm,
+		    date_format(B.start_dt,'%Y-%m-%d') as start_dt,
+			B.credit_cd,
+			date_format(B.credit_dt,'%Y-%m-%d') as credit_dt,
+			B.nep_yn,
+			B.license_yn,
+			B.model_yn,
+			B.gdgs_yn,
+			date_format(B.female_dt,'%Y-%m-%d') as female_dt,
+			B.innovate_yn,
+			B.scale_cd,
+			date_format(B.scale_dt,'%Y-%m-%d') as scale_dt,
+			case when credit_dt  <![CDATA[>=]]> (sysdate()-30) then 'A'
+			else 'B' end as flag, 
+		    (select distinct(eval_nm) FROM tn_eval_info where eval_type= '신용평가' and eval_cd = B.credit_cd) as credit_nm,
+		    (select distinct(eval_nm) FROM tn_eval_info where eval_type= '기업규모' and eval_cd = B.scale_cd) as scale_nm,
+		    B.bigo
+		FROM tn_bid_company_info A 
+		left outer join 
+		tn_bid_company_detail B 
+		on A.business_no = B.business_no
+		WHERE A.gubun='A'
+		    <if test="s_business_no!=null and !s_business_no.equals('')">  and A.business_no like CONCAT('%', #{s_business_no}, '%')            </if>
+		     <if test="s_company_no!=null and !s_company_no.equals('')">  and A.company_no like CONCAT('%', #{s_company_no}, '%')            </if>
+		    <if test="s_company_nm!=null and !s_company_nm.equals('')">  and A.company_nm like CONCAT('%', #{s_company_nm}, '%')            </if>
+		    <if test="s_area_cd!=null and !s_area_cd.equals('')">  and A.address like CONCAT('%', #{s_area_cd}, '%')            </if>
+		    <if test="s_area_txt!=null and !s_area_txt.equals('')">  and A.address_detail like CONCAT('%', #{s_area_txt}, '%')            </if>
+			<if test="s_company_type!=null and !s_company_type.equals('')">
+				and A.business_no in (select business_no from tn_bid_business_type where company_type_cd = #{s_company_type})
+			</if>
+			<if test="s_goods_type!=null and !s_goods_type.equals('')">
+				and A.business_no in (select business_no from tn_bid_business_goods where goods_no = #{s_goods_type})
+			</if>
+			<if test="s_goods_direct!=null and !s_goods_direct.equals('')">
+				and A.business_no in (select business_no from tn_bid_business_goods_direct where goods_no = #{s_goods_direct})
+			</if>
+		    
+		<trim prefix="ORDER BY">
+	        <choose>
+			    <when test="sort != null and sort!=''">
+					<if test="sort.equals('business_no')"> A.business_no</if>
+				    <if test="sort.equals('company_no')"> A.company_no</if>
+					<if test="sort.equals('company_nm')">A.company_nm </if>
+					<if test="sort.equals('start_dt')">B.start_dt </if>
+					<if test="sort.equals('nep_yn')">B.nep_yn </if>
+					<if test="sort.equals('license_yn')">B.license_yn </if>
+					<if test="sort.equals('model_yn')">B.model_yn </if>
+					<if test="sort.equals('gdgs_yn')">B.gdgs_yn </if>
+					<if test="sort.equals('female_dt')">B.female_dt </if>
+					<if test="sort.equals('scale_dt')">B.scale_dt </if>
+					<if test="sort.equals('credit_dt')">B.credit_dt </if>
+					<if test="sort.equals('innovate_yn')">B.innovate_yn </if>
+					<if test="sort.equals('credit_cd')">(select distinct(eval_nm) FROM tn_eval_info where eval_type= '신용평가' and eval_cd = B.credit_cd) </if>
+					<if test="sort.equals('scale_cd')">(select distinct(eval_nm) FROM tn_eval_info where eval_type= '기업규모' and eval_cd = B.scale_cd) </if>
+					
+					<if test="order!=null and order.equals('desc')"> desc </if>
+					<if test="order!=null and order.equals('asc')"> asc </if>
+			    </when>
+			</choose>
+        </trim> 
+		Limit #{pageNo}, #{rows}
+	</select>
+     
+    <select id="selectComboEvalList" parameterType="map" resultType="HashMap">
+	   /* 평가 콤보 (Business.selectComboEvalList) */	    
+	  select distinct(eval_cd) as cd, eval_nm as cd_nm
+	  FROM tn_eval_info
+	  where eval_type= #{eval_type}
+	  AND eval_group = #{eval_group}
+	</select>
+       
+   	<update id="updateBusinessDtlList" parameterType="map">
+	   /* 투찰사 상세 저장 (Business.updateBusinessDtlList) */	    
+	  		INSERT INTO tn_bid_company_detail
+					(
+					business_no,
+					start_dt,
+					credit_cd,
+					nep_yn,
+					license_yn,
+					model_yn,
+					gdgs_yn,
+					female_dt,
+					scale_dt,
+					credit_dt,
+					innovate_yn,
+					scale_cd,
+					create_id,
+					create_dt,
+					modify_id,
+					modify_dt,
+					bigo
+					)
+			VALUES
+				(			
+				   #{business_no},
+				   #{start_dt},
+				   #{credit_cd},
+				   #{nep_yn},
+				   #{license_yn},
+				   #{model_yn},
+				   #{gdgs_yn},
+				   #{female_dt},
+				   #{scale_dt},
+				   #{credit_dt},
+				   #{innovate_yn},
+				   #{scale_cd},
+				   #{user},
+				   sysdate(),
+				   #{user},
+				   sysdate(),
+				   #{bigo}				
+				)
+			on duplicate key
+			update
+			start_dt 	= 	#{start_dt},
+			credit_cd 	=	#{credit_cd},
+			nep_yn	    =	#{nep_yn},
+			license_yn	=   #{license_yn},
+			model_yn	=   #{model_yn},
+			gdgs_yn	    =	#{gdgs_yn},
+			female_dt	=   #{female_dt},
+			scale_dt	=   #{scale_dt},
+			credit_dt	=   #{credit_dt},
+			innovate_yn	=   #{innovate_yn},
+			scale_cd	=   #{scale_cd},
+			modify_id	=   #{user},
+			modify_dt	=   sysdate(), 
+			bigo	=   #{bigo}
+    </update>
+    
+     <select id="evalutionList" parameterType="map" resultType="HashMap">
+     	select * from tn_eval_info
+     	where 1=1
+     	<if test="eval_group!=null and !eval_group.equals('')">  and eval_group like CONCAT('%', #{eval_group}, '%')    </if>
+     	<if test="eval_cd!=null and !eval_cd.equals('')">  and eval_cd like CONCAT('%', #{eval_cd}, '%')            	</if>
+     	<if test="eval_gubun!=null and !eval_gubun.equals('')">  and eval_gubun like CONCAT('%', #{eval_gubun}, '%')    </if>
+     	<if test="eval_type!=null and !eval_type.equals('')">  and eval_type like CONCAT('%', #{eval_type}, '%')        </if>
+		
+     </select>
+     
+      <select id="selectOrderBusinessList" parameterType="map" resultType="HashMap">
+	/* 기업 정보 조회 (Business.selectOrderBusinessList) */	    
+	  SELECT
+		    business_no,
+		    company_no,
+		    company_nm,
+		    delegate,
+		    delegate_explain,
+		    company_type,
+		    case when length(business_no) > 0 then '1' else '0' end company_type_insert,
+		    company_registration_day,
+		    address,
+		    address_detail,
+		    phone_no,
+		    mobile_no,
+		    fax_no,
+		    department,
+		    position,
+		    bidmanager,
+		    email,
+		    business_condition,
+		    business_condition_detail,
+		    zip_no
+		FROM tn_order_company_info 
+		WHERE 1=1
+	    <if test="s_company_no!=null and !s_company_no.equals('')">  and company_no like CONCAT('%', #{s_company_no}, '%')            </if>
+	    <if test="s_company_nm!=null and !s_company_nm.equals('')">  and company_nm like CONCAT('%', #{s_company_nm}, '%')            </if>
+	    <if test="s_area_txt!=null and !s_area_txt.equals('')">  and address like CONCAT('%', #{s_area_txt}, '%')            </if>
+		<if test="s_goods_type!=null and !s_goods_type.equals('')">
+			and business_no in (select business_no from tn_order_business_goods where goods_no = #{s_goods_type})
+		</if>
+		
+		<trim prefix="ORDER BY">
+		        <choose>
+				    <when test="sort != null and sort!=''">
+						<if test="sort.equals('business_no')"> business_no</if>
+					    <if test="sort.equals('company_no')"> company_no</if>
+						<if test="sort.equals('company_nm')">company_nm </if>
+						<if test="sort.equals('address')">address </if>
+						<if test="sort.equals('phone_no')">phone_no </if>
+						
+						<if test="order!=null and order.equals('desc')"> desc </if>
+						<if test="order!=null and order.equals('asc')"> asc </if>
+				    </when>
+				</choose>
+            </trim> 
+		Limit #{pageNo}, #{rows}
+	</select>
+	
+    <select id="getOrderBusinessListCnt" parameterType="map" resultType="Integer">
+		SELECT count(*) as cnt 
+		from tn_order_company_info
+		WHERE 1=1
+	    <if test="s_company_no!=null and !s_company_no.equals('')">  and company_no like CONCAT('%', #{s_company_no}, '%')            </if>
+	    <if test="s_company_nm!=null and !s_company_nm.equals('')">  and company_nm like CONCAT('%', #{s_company_nm}, '%')            </if>
+		<if test="s_area_txt!=null and !s_area_txt.equals('')">  and address like CONCAT('%', #{s_area_txt}, '%')            </if>
+		<if test="s_goods_type!=null and !s_goods_type.equals('')">
+			and business_no in (select business_no from tn_order_business_goods where goods_no = #{s_goods_type})
+		</if>
+	</select>
+	
+    <select id="selectOrderBusinessList2" parameterType="map" resultType="HashMap">
+	/* 기업 정보 조회 (Business.selectOrderBusinessList2) */	    
+	  SELECT
+		    company_id,
+		    company_nm,
+		    address,
+		    tel,
+		    start_dt,
+		    end_dt
+		<if test="search_cd eq '1'.toString()">FROM temp_table1</if>
+	    <if test="search_cd eq '2'.toString()">FROM temp_table2</if>
+		<if test="search_cd eq '3'.toString()">FROM temp_table3 </if>
+		WHERE 1=1
+	    <if test="s_company_nm!=null and !s_company_nm.equals('')">  and company_nm like CONCAT('%', #{s_company_nm}, '%')            </if>
+	    <if test="s_area_txt!=null and !s_area_txt.equals('')">  and address like CONCAT('%', #{s_area_txt}, '%')            </if>
+		<trim prefix="ORDER BY">
+		        <choose>
+				    <when test="sort != null and sort!=''">
+						<if test="sort.equals('company_id')"> company_id</if>
+						<if test="sort.equals('company_nm')">company_nm </if>
+						<if test="sort.equals('address')">address </if>
+						<if test="sort.equals('tel')">tel </if>
+						<if test="sort.equals('start_dt')">start_dt </if>
+						<if test="sort.equals('end_dt')">end_dt </if>
+						
+						<if test="order!=null and order.equals('desc')"> desc </if>
+						<if test="order!=null and order.equals('asc')"> asc </if>
+				    </when>
+				</choose>
+            </trim> 
+		Limit #{pageNo}, #{rows}
+	</select>
+	
+    <select id="getOrderBusinessListCnt2" parameterType="map" resultType="Integer">
+		SELECT count(*) as cnt 
+		<if test="search_cd eq '1'.toString()">FROM temp_table1</if>
+	    <if test="search_cd eq '2'.toString()">FROM temp_table2</if>
+		<if test="search_cd eq '3'.toString()">FROM temp_table3 </if>
+		WHERE 1=1
+	    <if test="s_company_nm!=null and !s_company_nm.equals('')">  and company_nm like CONCAT('%', #{s_company_nm}, '%')            </if>
+		<if test="s_area_txt!=null and !s_area_txt.equals('')">  and address like CONCAT('%', #{s_area_txt}, '%')            </if>
+	</select>
+	
+    
+    
+    <update id="updateOrderBusinessList" parameterType="map">
+	    /* 기업정보 저장 (Business.updateOrderBusinessList) */	    
+	  		INSERT INTO tn_order_company_info
+					(
+					company_no,
+					company_nm,
+					delegate,
+					address,
+					address_detail,
+					phone_no,
+					gubun
+					)
+			VALUES
+				(			
+				   #{company_no},
+				   #{company_nm},
+				   #{delegate},
+				   #{address},
+				   #{address_detail},
+				   #{phone_no},
+				   'C'     				
+				)
+			on duplicate key
+			update
+			company_no 				= #{company_no},
+			company_nm 				= #{company_nm},
+			delegate 				= #{delegate},
+			address 				= #{address},
+			address_detail 			= #{address_detail},
+			phone_no 				= #{phone_no}
+    </update>
+    
+     <delete id="deleteOrderBusinessList" parameterType="map" >
+          /* 기업정보 삭제 (Business.deleteOrderBusinessList) */
+         DELETE from tn_order_company_info 
+		where business_no = #{business_no}
+     </delete>
+	
+     <select id="selectBizNotiHisList" parameterType="map" resultType="HashMap">
+	    /* 기업비고정보 불러오기 (Business.selectBizNotiHisList) */	    
+         select A.his_id,
+         A.business_no,
+         A.bigo, A.del_yn,
+         (select user_nm from tn_user_info where user_id=A.create_id) as user_nm,
+         create_id, 
+         date_format(create_dt,'%Y%m%d') as create_dt
+         from tn_bid_company_noti_his A
+         where A.business_no = #{business_no}
+         and A.del_yn = 'N'
+     </select>
+     
+     <update id="insertBizNotiHisList" parameterType="map">
+	    /* 기업비고정보 저장 (Business.updateBizNotiHisList) */	    
+	  		INSERT INTO tn_bid_company_noti_his
+					(
+					business_no,
+					bigo,
+					del_yn,
+					create_id,
+					create_dt,
+					modify_id,
+					modify_dt
+					)
+			VALUES
+				(			
+				   #{business_no},
+				   #{bigo},
+				   #{del_yn},
+				   #{userId},
+				   sysdate(),
+				   #{userId},
+				   sysdate()
+				)
+    </update>
+     <update id="updateBizNotiHisList" parameterType="map">
+	    /* 기업비고정보 저장 (Business.updateBizNotiHisList) */	    
+			update tn_bid_company_noti_his
+			bigo 				= #{bigo},
+			modify_id 			= #{userId},
+			modify_dt 			= sysdate()
+			where his_id = #{his_id}
+    </update>
+     <update id="deleteBizNotiHisList" parameterType="map">
+	    /* 기업비고정보 삭제 (Business.deleteBizNotiHisList) */	    
+			update tn_bid_company_noti_his
+			set
+			del_yn 				= #{del_yn},
+			modify_id 			= #{userId},
+			modify_dt 			= sysdate()
+			where his_id = #{his_id}
+    </update>
+    
+     <update id="updateCompanyFileList" parameterType="map">
+	    /* 프로젝트 파일  (Business.updateCompanyFileList) */	
+	    UPDATE tn_bid_company_info
+		set
+			file_id1 =	#{file_id1},
+			file_id2 =	#{file_id2},
+			file_id3 =	#{file_id3},
+			file_id4 =	#{file_id4}
+		where business_no = #{business_no}
+   </update>
+   
+     
+   <select id="selectBusinessBidInfoList" parameterType="map" resultType="HashMap">
+	/* 투찰사 투찰 이력 조회 (Business.selectBusinessBidInfoList) */	    
+	  SELECT
+		    A.business_no,
+		    A.company_no,
+		    A.company_nm,
+			(
+				select count(*) as cnt 
+				from tn_bid_business_rel B1,
+					 tn_bid_notice_info B2,
+					 tn_bid_apply_info B3
+				where B1.bid_notice_no = B2.bid_notice_no
+				and B1.bid_notice_cha_no = B2.bid_notice_cha_no
+				and B2.bid_notice_no = B3.bid_notice_no
+				and B2.bid_notice_cha_no = B3.bid_notice_cha_no
+				and B3.status_cd3 ='002'
+				<if test="bidStartDt!=null and !bidStartDt.equals('')">  and date_format(substr(B2.bid_end_dt,1,8),'%Y%m%d') <![CDATA[>=]]> date_format(#{bidStartDt},'%Y%m%d')  </if>
+				<if test="bidEndDt!=null and !bidEndDt.equals('')">  and date_format(substr(B2.bid_end_dt,1,8),'%Y%m%d') <![CDATA[<=]]> date_format(#{bidEndDt},'%Y%m%d')             </if>
+				and B1.business_no = A.business_no
+				)  as cnt,
+			(
+				select count(*) as cnt 
+				from tn_bid_open_result_compt B1, tn_bid_notice_info B2, tn_bid_apply_info B3, tn_bid_business_rel B4
+				where B1.bid_notice_no = B2.bid_notice_no 
+				and B1.bid_notice_cha_no = B2.bid_notice_cha_no 
+				and B2.bid_notice_no = B3.bid_notice_no 
+				and B2.bid_notice_cha_no = B3.bid_notice_cha_no 
+				and B3.status_cd3 ='002' 
+				and B2.bid_notice_no = B4.bid_notice_no 
+				and B2.bid_notice_cha_no = B4.bid_notice_cha_no
+    			and B4.business_no = A.business_no 
+				<if test="bidStartDt!=null and !bidStartDt.equals('')">  and date_format(substr(B2.bid_end_dt,1,8),'%Y%m%d') <![CDATA[>=]]> date_format(#{bidStartDt},'%Y%m%d')  </if>
+				<if test="bidEndDt!=null and !bidEndDt.equals('')">  and date_format(substr(B2.bid_end_dt,1,8),'%Y%m%d') <![CDATA[<=]]> date_format(#{bidEndDt},'%Y%m%d')             </if>
+				and B1.biz_reg_no = replace(A.company_no,'-','')
+				)  as cnt1
+		FROM tn_bid_company_info A
+		WHERE gubun='A'
+		<if test="s_business_no!=null and !s_business_no.equals('')">  and A.business_no like CONCAT('%', #{s_business_no}, '%')            </if>
+	    <if test="s_company_no!=null and !s_company_no.equals('')">  and A.company_no like CONCAT('%', #{s_company_no}, '%')            </if>
+	    <if test="s_company_nm!=null and !s_company_nm.equals('')">  and A.company_nm like CONCAT('%', #{s_company_nm}, '%')            </if>
+		GROUP BY A.business_no,
+				 A.company_no,
+				 A.company_nm
+		ORDER BY company_nm asc
+		Limit #{pageNo}, #{rows}
+	</select>
+	
+    <select id="getBusinessBidInfoListCnt" parameterType="map" resultType="Integer">
+		/* 투찰사 투찰 이력 갯수 (Business.getBusinessBidInfoListCnt) */	    
+        SELECT
+		    count(*)
+		FROM tn_bid_company_info A
+		WHERE gubun='A'
+		<if test="s_business_no!=null and !s_business_no.equals('')">  and A.business_no like CONCAT('%', #{s_business_no}, '%')            </if>
+	    <if test="s_company_no!=null and !s_company_no.equals('')">  and A.company_no like CONCAT('%', #{s_company_no}, '%')            </if>
+	    <if test="s_company_nm!=null and !s_company_nm.equals('')">  and A.company_nm like CONCAT('%', #{s_company_nm}, '%')            </if>
+	</select> 
+	
+    <select id="selectBusinessBidInfoDtlList" parameterType="map" resultType="HashMap">
+	/* 투찰사 투찰 이력상세 조회 (Business.selectBusinessBidInfoDtlList) */	    
+		select * 
+		from
+		(select A.bid_notice_no, A.bid_notice_cha_no, A.bid_notice_nm, A.bid_end_dt, B.business_no, B.company_nm, B.company_no 
+		from tn_bid_notice_info A,
+			 tn_bid_company_info B,
+		     tn_bid_business_rel C,
+		     tn_bid_apply_info D
+		where A.bid_notice_no = C.bid_notice_no
+		and A.bid_notice_cha_no = C.bid_notice_cha_no
+		and A.bid_notice_no = D.bid_notice_no
+		and A.bid_notice_cha_no = D.bid_notice_cha_no
+		and B.business_no = C.business_no
+		and B.gubun = 'A'
+		and D.status_Cd3 ='002'
+		<if test="bidStartDt!=null and !bidStartDt.equals('')">  and date_format(substr(A.bid_end_dt,1,8),'%Y%m%d') <![CDATA[>=]]> date_format(#{bidStartDt},'%Y%m%d')  </if>
+		<if test="bidEndDt!=null and !bidEndDt.equals('')">  and date_format(substr(A.bid_end_dt,1,8),'%Y%m%d') <![CDATA[<=]]> date_format(#{bidEndDt},'%Y%m%d')             </if>
+		and B.business_no=#{business_no}) A
+		left outer join 
+		tn_bid_open_result_compt B
+		on A.bid_notice_no = B.bid_notice_no
+		and A.bid_notice_cha_no = B.bid_notice_cha_no
+		and replace(A.company_no,'-','') = B.biz_reg_no
+		order by A.bid_end_dt desc
+	</select>
+</mapper>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.com.bidserver.sever.company.tn_bid_company_info.service.impl.tn_bid_company_infoMapper">
+	
+<!-- 	
+	<resultMap type="egovframework.com.bidserver.sever.company.tn_bid_company_info.entity.tn_bid_company_info" id="resultMap-tn_bid_company_info" >		                              
+	
+			<result column="ID"                                  property="id"/>                     
+			<result column="BUSINESS_NO"                         property="businessNo"/>             
+			<result column="COMPANY_NM"                          property="companyNm"/>              
+			<result column="DELEGATE"                            property="delegate"/>               
+			<result column="DELEGATE_EXPLAIN"                    property="delegateExplain"/>        
+			<result column="COMPANY_TYPE"                        property="companyType"/>            
+			<result column="COMPANY_REGISTRATION_DAY"            property="companyRegistrationDay"/> 
+			<result column="ADDRESS"                             property="address"/>                
+			<result column="ADDRESS_DETAIL"                      property="addressDetail"/>          
+			<result column="PHONE_NO"                            property="phoneNo"/>                
+			<result column="MOBILE_NO"                           property="mobileNo"/>               
+			<result column="FAX_NO"                              property="faxNo"/>                  
+			<result column="DEPARTMENT"                          property="department"/>             
+			<result column="POSITION"                            property="position"/>               
+			<result column="BIDMANAGER"                          property="bidmanager"/>             
+			<result column="EMAIL"                               property="email"/>                  
+			<result column="BUSINESS_CONDITION"                  property="businessCondition"/>      
+			<result column="BUSINESS_CONDITION_DETAIL"           property="businessConditionDetail"/>  
+			<result column="ZIP_NO"                              property="zipNo"/>  
+	
+			
+	</resultMap>
+	 -->
+	
+	
+		
+	<resultMap id="resultMap-tn_bid_company_info" type="HashMap">
+	</resultMap>
+	
+	<select id="selecttn_bid_company_info"  parameterType="map"  resultMap="resultMap-tn_bid_company_info">		
+	/* 투찰사 정보 조회 (company-tn_bid_company_info.selecttn_bid_company_info) */	    
+	  SELECT
+		    business_no,
+		    company_nm,
+		    delegate,
+		    delegate_explain,
+		    company_type,
+		    company_registration_day,
+		    address,
+		    address_detail,
+		    phone_no,
+		    mobile_no,
+		    fax_no,
+		    department,
+		    position,
+		    bidmanager,
+		    email,
+		    business_condition,
+		    business_condition_detail,
+		    zip_no
+		FROM tn_bid_company_info WHERE GUBUN=#{gubun} and unuse_yn != 'Y'
+		
+    </select>
+    
+    
+    <insert id="inserttn_bid_company_info" parameterType="tn_bid_company_info">
+    /* 투찰사 저장 (company-tn_bid_company_info.selecttn_bid_company_info) */	    
+    
+    
+  		INSERT INTO tn_bid_company_info
+				(
+				business_no,
+				company_nm,
+				delegate,
+				delegate_explain,
+				company_type,
+				company_registration_day,
+				address,
+				address_detail,
+				phone_no,
+				mobile_no,
+				fax_no,
+				department,
+				position,
+				bidmanager,
+				email,
+				business_condition,
+				business_condition_detail,
+				zip_no,
+				gubun
+				)
+		VALUES
+			(			
+			   #{businessNo},
+			   #{companyNm},
+			   #{delegate},
+			   #{delegateExplain},
+			   #{companyType},
+			   #{companyRegistrationDay},
+			   #{address},
+			   #{addressDetail},
+			   #{phoneNo},
+			   #{mobileNo},
+			   #{faxNo},
+			   #{department},
+			   #{position},
+			   #{bidmanager},
+			   #{email},
+			   #{businessCondition},
+			   #{businessConditionDetail},
+			   #{zipNo},
+			   #{gubun}     				
+			)
+    </insert>
+ 
+   
+	
+	<!-- 	insert,update -->
+	<insert id="update"    >	
+	<![CDATA[
+		
+		${sendQuery}
+		
+	]]> 
+	</insert>
+	 
+	 
+</mapper>

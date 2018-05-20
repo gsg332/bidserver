@@ -1,0 +1,1413 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.com.bidserver.distribution.service.impl.DistributionMapper">
+
+	<select id="selectBidList" parameterType="map" resultType="HashMap">
+		/* 입찰공고분배 리스트 (selectBidList) */	
+		SELECT 
+			concat(A.bid_notice_no,'-',A.bid_notice_cha_no) as bid_notice_no,
+			A.bid_notice_no as bigo_notice_no,
+			A.bid_notice_cha_no as bigo_notice_cha_no,
+			A.notice_type,
+			A.bid_notice_nm,
+			A.bid_end_dt,
+			A.pre_price,
+			A.detail_goods_nm,
+			A.use_area_info,
+			A.bid_lic_reg_dt,
+			A.user_id, 
+			(select user_nm from tn_user_info where user_id=A.user_id) as user_nm,
+			A.bigo,
+			A.important_yn,
+			A.color_type,
+			case when substr(A.bid_end_dt,1,10)  <![CDATA[<]]> date_format(sysdate(),'%Y%m%d%H') then 'F' else
+			case when substr(A.bid_start_dt,1,10) <![CDATA[<=]]> date_format(sysdate(),'%Y%m%d%H') then 'C' else 'B' end
+			end as finish_status,
+			B.apply_user_id1,
+			B.apply_user_id2,
+			B.apply_user_id3,
+			B.status_step,
+			B.status_cd1,
+			B.status_cd2,
+			B.status_cd3,
+			B.apply_dt1,
+			B.apply_dt2,
+			date_format(B.apply_dt3, '%Y.%m.%d') as apply_dt3,
+			C.bigo as manager_bigo,
+			C.column4,
+			(select D.send_message from tn_bid_business_rel D where A.bid_notice_no = D.bid_notice_no and A.bid_notice_cha_no = D.bid_notice_cha_no order by modify_dt desc Limit 1) as business_state,
+			E.notice_spec_form1, 
+			E.notice_spec_file_nm1, 
+			E.notice_spec_form2, 
+			E.notice_spec_file_nm2,
+			E.notice_spec_form3, 
+			E.notice_spec_file_nm3,
+			E.notice_spec_form4, 
+			E.notice_spec_file_nm4,
+			E.notice_spec_form5, 
+			E.notice_spec_file_nm5,
+			E.notice_spec_form6, 
+			E.notice_spec_file_nm6,
+			E.notice_spec_form7, 
+			E.notice_spec_file_nm7,
+			E.notice_spec_form8, 
+			E.notice_spec_file_nm8,
+			E.notice_spec_form9, 
+			E.notice_spec_file_nm9,
+			E.notice_spec_form10, 
+			E.notice_spec_file_nm10
+		from tn_bid_distribution_info A
+		left outer join
+		tn_bid_apply_info B
+		on A.bid_notice_no = B.bid_notice_no  
+		and A.bid_notice_cha_no = B.bid_notice_cha_no
+		left outer join
+	    tn_bid_notice_info_detail C
+	    on A.bid_notice_no = C.bid_notice_no  
+		and A.bid_notice_cha_no = C.bid_notice_cha_no
+		left outer
+		join tn_bid_notice_file E
+		on A.bid_notice_no = E.bid_notice_no AND A.bid_notice_cha_no = E.bid_notice_cha_no
+		where 1=1
+		    <if test="disSDt!=null and !disSDt.equals('')">  and date_format(A.create_dt,'%Y%m%d') <![CDATA[>=]]> date_format(#{disSDt},'%Y%m%d')  </if>
+			<if test="disEDt!=null and !disEDt.equals('')">  and date_format(A.create_dt,'%Y%m%d') <![CDATA[<=]]> date_format(#{disEDt},'%Y%m%d')  </if>
+			<choose>
+				<when test="bidNoticeNo!=null and !bidNoticeNo.equals('')">
+					and CONCAT(CONCAT(A.bid_notice_no,'-'),A.bid_notice_cha_no) like CONCAT('%', #{bidNoticeNo}, '%') 
+				</when>
+				<otherwise>
+					<if test="disDt!=null and !disDt.equals('')">  
+					    and date_format(A.create_dt,'%Y%m%d') <![CDATA[=]]> date_format(#{disDt},'%Y%m%d')  
+					</if>
+				</otherwise>
+			</choose>
+			<if test="bid_notice_no!=null and !bid_notice_no.equals('')">  and CONCAT(CONCAT(A.bid_notice_no,'-'),A.bid_notice_cha_no) like CONCAT('%', #{bidNoticeNo}, '%') </if>
+		    <if test="bidNoticeNm!=null and !bidNoticeNm.equals('')">  and A.bid_notice_nm like CONCAT('%', #{bidNoticeNm}, '%') </if>
+		    <if test="opinion!=null and !opinion.equals('')">  and C.column4 like CONCAT('%', #{opinion}, '%') </if>    
+		    <if test="userId!=null and !userId.equals('')">  
+			    <if test="userId.equals('non')">   
+			        and A.user_id  is null            
+			    </if>
+			    <if test="!userId.equals('non')">   
+			        and A.user_id  =  #{userId}            
+			    </if>
+			</if>	      
+			<if test="status_step_list!=null and !status_step_list.equals('')">
+				<if test="status_step_list.equals('selectList2')">  
+				  	<choose>
+				  		<when test="status_step!=null and !status_step.equals('')">
+				  			<choose>				  				
+				  				<when test="status_step==0">
+				  					and B.status_step = '1'
+				  				</when>		
+				  				<when test="status_step==1">
+				  					and B.status_step = '0'
+				  				</when>	
+				  				<when test="status_step==2">
+				  					and B.status_step  is null 
+				  				</when>	
+				  				<when test="status_step==3">
+				  					and B.status_step in ('2','3') and (B.status_cd3 is null or B.Status_Cd3 != '002')
+				  				</when>
+				  				<when test="status_step==4">
+				  					and B.status_step = '3' and B.status_cd3 = '002'
+				  				</when>		  				
+				  			</choose>
+				  		</when>
+				  		<!-- <otherwise>
+				  			and (B.status_step in ('0','1') or B.status_step is null)
+				  		</otherwise> -->
+				  	</choose> 
+				</if>
+				<if test="status_step_list.equals('selectList5')">  
+				  	and B.status_step not in ('0')
+				</if>
+			</if>
+		    <trim prefix="ORDER BY">
+		        <choose>
+				    <when test="sort != null and sort!=''">
+						<if test="sort.equals('bid_notice_nm')"> A.bid_notice_nm</if>
+					    <if test="sort.equals('bid_notice_no')"> A.bid_notice_no</if>
+						<if test="sort.equals('bid_end_dt')">A.bid_end_dt </if>
+						<if test="sort.equals('pre_price')">A.pre_price </if>
+						<if test="sort.equals('status_step')">B.status_step </if>
+						<if test="sort.equals('column4')">C.column4 </if>							
+						<if test="order!=null and order.equals('desc')"> desc </if>
+						<if test="order!=null and order.equals('asc')"> asc </if>
+				    </when>
+				    <otherwise>
+				    	important_yn desc, bid_end_dt desc
+				    </otherwise>
+				</choose>
+            </trim> 
+		Limit #{pageNo}, #{rows}
+	</select>
+	
+	<select id="getBidListCnt" parameterType="map" resultType="Integer">
+	    /* 입찰공고분배 총갯수 (getBidListCnt) */	
+		SELECT count(*) as cnt  
+		from tn_bid_distribution_info A
+		left outer join
+		tn_bid_apply_info B
+		on A.bid_notice_no = B.bid_notice_no  
+		and A.bid_notice_cha_no = B.bid_notice_cha_no
+		left outer join
+	    tn_bid_notice_info_detail C
+	    on A.bid_notice_no = C.bid_notice_no  
+		and A.bid_notice_cha_no = C.bid_notice_cha_no
+		where 1=1
+			    <if test="disDt!=null and !disDt.equals('')">  and date_format(A.create_dt,'%Y%m%d') <![CDATA[=]]> date_format(#{disDt},'%Y%m%d')  </if>
+			    <if test="disSDt!=null and !disSDt.equals('')">  and date_format(A.create_dt,'%Y%m%d') <![CDATA[>=]]> date_format(#{disSDt},'%Y%m%d')  </if>
+				<if test="disEDt!=null and !disEDt.equals('')">  and date_format(A.create_dt,'%Y%m%d') <![CDATA[<=]]> date_format(#{disEDt},'%Y%m%d')  </if>
+				<if test="bidNoticeNo!=null and !bidNoticeNo.equals('')">  and CONCAT(CONCAT(A.bid_notice_no,'-'),A.bid_notice_cha_no) like CONCAT('%', #{bidNoticeNo}, '%') </if>
+				<if test="bid_notice_no!=null and !bid_notice_no.equals('')">  and CONCAT(CONCAT(A.bid_notice_no,'-'),A.bid_notice_cha_no) like CONCAT('%', #{bid_notice_no}, '%') </if>
+			    <if test="bidNoticeNm!=null and !bidNoticeNm.equals('')">  and A.bid_notice_nm like CONCAT('%', #{bidNoticeNm}, '%') </if>
+			    <if test="userId!=null and !userId.equals('')">  
+				    <if test="userId.equals('non')">   
+				        and A.user_id  is null            
+				    </if>
+				    <if test="!userId.equals('non')">   
+				        and A.user_id  =  #{userId}            
+				    </if>
+				</if>
+				<if test="status_step_list!=null and !status_step_list.equals('')">
+					<if test="status_step_list.equals('selectList2')">  
+					  	<choose>
+				  		<when test="status_step!=null and !status_step.equals('')">
+				  			<choose>				  				
+				  				<when test="status_step==0">
+				  					and B.status_step = '1'
+				  				</when>		
+				  				<when test="status_step==1">
+				  					and B.status_step = '0'
+				  				</when>	
+				  				<when test="status_step==2">
+				  					and B.status_step  is null 
+				  				</when>	
+				  				<when test="status_step==3">
+				  					and B.status_step in ('2','3') and (B.status_cd3 is null or B.Status_Cd3 != '002')
+				  				</when>
+				  				<when test="status_step==4">
+				  					and B.status_step = '3' and B.status_cd3 = '002'
+				  				</when>		  				
+				  			</choose>
+				  		</when>
+				  		<!-- <otherwise>
+				  			and (B.status_step in ('0','1') or B.status_step is null)
+				  		</otherwise> -->
+				  	</choose>
+					</if>
+					<if test="status_step_list.equals('selectList5')">  
+					  	and B.status_step not in ('0')
+					</if>
+				</if>   			 
+	</select>
+	
+	<select id="selectBidUserCnt" parameterType="map" resultType="HashMap">
+		Select Ifnull(A.User_Id,'') as user_id, Count(Ifnull(A.user_id,'')) as user_cnt, case when A.user_id = 'non' then '미지정' else user_nm end as user_nm  
+		From tn_bid_distribution_info A Left Outer Join tn_user_info B On A.user_id = B.user_id 
+		WHERE 1 = 1
+		<if test="disDt!=null and !disDt.equals('')">  and date_format(A.create_dt,'%Y%m%d') <![CDATA[=]]> date_format(#{disDt},'%Y%m%d')  </if>	
+		Group By A.user_id
+	</select>
+	
+	<select id="selectBidList2" parameterType="map" resultType="HashMap">
+		/* 입찰공고분배 리스트 (selectBidList2) */	
+		SELECT 
+			concat(A.bid_notice_no,'-',A.bid_notice_cha_no) as bid_notice_no,
+			A.notice_type,
+			A.bid_notice_nm,
+			A.bid_end_dt,
+			A.pre_price,
+			A.detail_goods_nm,
+			A.use_area_info,
+			A.bid_lic_reg_dt,
+			A.user_id, 
+			(select user_nm from tn_user_info where user_id=A.user_id) as user_nm,
+			A.bigo,
+			A.important_yn,
+			A.color_type,
+			case when substr(A.bid_end_dt,1,10)  <![CDATA[<]]> date_format(sysdate(),'%Y%m%d%H') then 'F' else
+			case when substr(A.bid_start_dt,1,10) <![CDATA[<=]]> date_format(sysdate(),'%Y%m%d%H') then 'C' else 'B' end
+			end as finish_status,
+			C.column4,
+			C.bigo as manager_bigo,
+			B.apply_user_id1,
+			B.apply_user_id2,
+			B.apply_user_id3,
+			B.status_step,
+			B.status_cd1,
+			B.status_cd2,
+			B.status_cd3,
+			B.apply_dt1,
+			B.apply_dt2,
+			date_format(B.apply_dt3, '%Y.%m.%d') as apply_dt3
+		from tn_bid_distribution_info A
+		left outer join
+		tn_bid_apply_info B
+		on A.bid_notice_no = B.bid_notice_no  
+		and A.bid_notice_cha_no = B.bid_notice_cha_no
+		left outer join
+	    tn_bid_notice_info_detail C
+	    on A.bid_notice_no = C.bid_notice_no  
+		and A.bid_notice_cha_no = C.bid_notice_cha_no
+		where A.user_id != 'non'
+			<if test="status_step_list!=null and !status_step_list.equals('')">
+				  <if test="status_step_list.equals('selectList3')"> 
+				  	<choose>
+				  		<when test="status_step!=null and !status_step.equals('')">
+				  			<choose>
+				  				<when test="status_step.equals('nvl')">
+				  					and B.status_step  is null 
+				  				</when>
+				  				<when test="!status_step.equals('nvl')">
+				  					and B.status_step = #{status_step} 
+				  				</when>
+				  			</choose>
+				  		</when>
+				  		<otherwise>
+				  			and (B.status_step in ('0','1') or B.status_step is null)
+				  		</otherwise>
+				  	</choose> 			  	
+				  </if>
+				  <if test="status_step_list.equals('selectList4')">
+				  	<choose>
+				  		<when test="status_step2!=null and !status_step2.equals('')">
+				  			<choose>
+				  				<when test="status_step2==0">
+				  					and B.status_step = '2' and B.status_cd2 = '001'
+				  				</when>
+				  				<when test="status_step2==1">
+				  					and B.status_step = '1' and B.status_cd2 = '003'
+				  				</when>
+				  				<when test="status_step2==2">
+				  					and B.status_step = '3' and B.status_cd3 = '002' and B.apply_user_id2 != 'pass' and B.apply_user_id3 = 'pass'
+				  				</when>
+				  				<when test="status_step2==3">
+				  					and B.status_step = '3' and B.status_cd3 = '001'
+				  				</when>
+				  				<when test="status_step2==4">
+				  					and B.status_step = '2' and B.status_cd3 = '003' 
+				  				</when>
+				  				<when test="status_step2==5">
+				  					and B.status_step = '3' and B.status_cd3 = '002' and B.apply_user_id2 != 'pass' and B.apply_user_id3 != 'pass'
+				  				</when>
+				  				<when test="status_step2==6">
+				  					and B.status_step = '3' and B.status_cd3 = '002' and B.apply_user_id2 = 'pass' and B.apply_user_id3 = 'pass'
+				  				</when>			  				
+				  			</choose>
+				  		</when>
+				  		<otherwise>
+				  			and (B.status_step in ('2','3') or B.status_cd2 = '003') and B.status_step != '0'
+				  		</otherwise>
+				  	</choose>  	  	
+				  </if>
+			</if>	
+		    <if test="disSDt!=null and !disSDt.equals('')">  and date_format(substr(A.bid_end_dt,1,8),'%Y%m%d') <![CDATA[>=]]> date_format(#{disSDt},'%Y%m%d')  </if>
+			<if test="disEDt!=null and !disEDt.equals('')">  and date_format(substr(A.bid_end_dt,1,8),'%Y%m%d') <![CDATA[<=]]> date_format(#{disEDt},'%Y%m%d')  </if>	
+			<if test="bidNoticeNo!=null and !bidNoticeNo.equals('')">  and CONCAT(CONCAT(A.bid_notice_no,'-'),A.bid_notice_cha_no) like CONCAT('%', #{bidNoticeNo}, '%') </if>
+		    <if test="bidNoticeNm!=null and !bidNoticeNm.equals('')">  and A.bid_notice_nm like CONCAT('%', #{bidNoticeNm}, '%') </if>
+		    <if test="opinion!=null and !opinion.equals('')">  and C.column4 like CONCAT('%', #{opinion}, '%') </if>
+		    <if test="userId!=null and !userId.equals('')">  
+			    <if test="userId.equals('non')">   
+			        and A.user_id  is null            
+			    </if>
+			    <if test="!userId.equals('non')">   
+			        and A.user_id  =  #{userId}            
+			    </if>
+			</if>		      
+		    <trim prefix="ORDER BY">
+		        <choose>
+				    <when test="sort != null and sort!=''">
+						<if test="sort.equals('bid_notice_nm')"> A.bid_notice_nm</if>
+					    <if test="sort.equals('bid_notice_no')"> A.bid_notice_no</if>
+						<if test="sort.equals('bid_end_dt')">A.bid_end_dt </if>
+						<if test="sort.equals('pre_price')">A.pre_price </if>
+						<if test="sort.equals('status_step')">B.status_step </if>
+						<if test="sort.equals('column4')">C.column4 </if>								
+						<if test="order!=null and order.equals('desc')"> desc </if>
+						<if test="order!=null and order.equals('asc')"> asc </if>
+				    </when>
+				    <otherwise>
+				    	important_yn desc, bid_end_dt desc
+				    </otherwise>
+				</choose>
+            </trim> 
+		Limit #{pageNo}, #{rows}
+	</select>
+	
+	<select id="getBidListCnt2" parameterType="map" resultType="Integer">
+	    /* 입찰공고분배 총갯수 (getBidListCnt2) */	
+		SELECT count(*) as cnt  
+		from tn_bid_distribution_info A
+		left outer join
+		tn_bid_apply_info B
+		on A.bid_notice_no = B.bid_notice_no  
+		and A.bid_notice_cha_no = B.bid_notice_cha_no
+		left outer join
+	    tn_bid_notice_info_detail C
+	    on A.bid_notice_no = C.bid_notice_no  
+		and A.bid_notice_cha_no = C.bid_notice_cha_no
+		where user_id != 'non'
+			    <if test="status_step_list!=null and !status_step_list.equals('')">
+				  <if test="status_step_list.equals('selectList3')"> 
+				  	<choose>
+				  		<when test="status_step!=null and !status_step.equals('')">
+				  			<choose>
+				  				<when test="status_step.equals('nvl')">
+				  					and B.status_step  is null 
+				  				</when>
+				  				<when test="!status_step.equals('nvl')">
+				  					and B.status_step = #{status_step} 
+				  				</when>
+				  			</choose>
+				  		</when>
+				  		<otherwise>
+				  			and (B.status_step in ('0','1') or B.status_step is null)
+				  		</otherwise>
+				  	</choose> 			  	
+				  </if>
+				  <if test="status_step_list.equals('selectList4')">
+				  	<choose>
+				  		<when test="status_step2!=null and !status_step2.equals('')">
+				  			<choose>
+				  				<when test="status_step2==0">
+				  					and B.status_step = '2' and B.status_cd2 = '001'
+				  				</when>
+				  				<when test="status_step2==1">
+				  					and B.status_step = '1' and B.status_cd2 = '003'
+				  				</when>
+				  				<when test="status_step2==2">
+				  					and B.status_step = '3' and B.status_cd3 = '002' and B.apply_user_id2 != 'pass' and B.apply_user_id3 = 'pass'
+				  				</when>
+				  				<when test="status_step2==3">
+				  					and B.status_step = '3' and B.status_cd3 = '001'
+				  				</when>
+				  				<when test="status_step2==4">
+				  					and B.status_step = '2' and B.status_cd3 = '003' 
+				  				</when>
+				  				<when test="status_step2==5">
+				  					and B.status_step = '3' and B.status_cd3 = '002' and B.apply_user_id2 != 'pass' and B.apply_user_id3 != 'pass'
+				  				</when>
+				  				<when test="status_step2==6">
+				  					and B.status_step = '3' and B.status_cd3 = '002' and B.apply_user_id2 = 'pass' and B.apply_user_id3 = 'pass'
+				  				</when>			  				
+				  			</choose>
+				  		</when>
+				  		<otherwise>
+				  			and (B.status_step in ('2','3') or B.status_cd2 = '003') and B.status_step != '0'
+				  		</otherwise>
+				  	</choose>  	  	
+				  </if>
+				</if>	
+			    <if test="disSDt!=null and !disSDt.equals('')">  and date_format(substr(A.bid_end_dt,1,8),'%Y%m%d') <![CDATA[>=]]> date_format(#{disSDt},'%Y%m%d')  </if>
+				<if test="disEDt!=null and !disEDt.equals('')">  and date_format(substr(A.bid_end_dt,1,8),'%Y%m%d') <![CDATA[<=]]> date_format(#{disEDt},'%Y%m%d')  </if>	
+				<if test="bidNoticeNo!=null and !bidNoticeNo.equals('')">  and CONCAT(CONCAT(A.bid_notice_no,'-'),A.bid_notice_cha_no) like CONCAT('%', #{bidNoticeNo}, '%') </if>
+			    <if test="bidNoticeNm!=null and !bidNoticeNm.equals('')">  and A.bid_notice_nm like CONCAT('%', #{bidNoticeNm}, '%') </if>
+			    <if test="userId!=null and !userId.equals('')">  
+				    <if test="userId.equals('non')">   
+				        and A.user_id  is null            
+				    </if>
+				    <if test="!userId.equals('non')">   
+				        and A.user_id  =  #{userId}            
+				    </if>
+				</if>		
+	</select>
+	
+	<select id="selectDisCnt" parameterType="map" resultType="Integer">
+		SELECT count(*) 
+		from tn_bid_distribution_info where concat(bid_notice_no,'-',bid_notice_cha_no) = 
+		<choose>
+			<when test="bid_notice_cha_no!=null and !bid_notice_cha_no.equals('')">
+				concat(#{bid_notice_no},'-',#{bid_notice_cha_no})
+			</when>
+			<otherwise>
+				#{bid_notice_no}
+			</otherwise>
+		</choose>	
+	</select>
+	
+	<insert id="insertDistributionList" parameterType="map">
+		/* 입찰공고분배 등록  (insertDistributionList) */	
+	    insert into tn_bid_distribution_info 
+											select
+												    bid_type
+													,bid_notice_no
+													,bid_notice_cha_no
+													,reg_type
+													,notice_type
+													,nation_bid_yn
+													,noti_dt
+													,ref_no
+													,bid_notice_nm
+													,order_agency_cd
+													,order_agency_nm
+													,demand_no
+													,demand_nm
+													,bid_method
+													,contract_type_nm
+													,reg_user_nm
+													,reg_user_tel
+													,reg_user_mail
+													,executor_nm
+													,bid_lic_reg_dt
+													,part_sup_yn
+													,part_sup_agree_form_reg_dt
+													,part_sup_area_limit_yn
+													,bid_start_dt
+													,bid_end_dt
+													,bid_open_dt
+													,re_bid_permit_yn
+													,bid_use_area1
+													,bid_use_area2
+													,bid_use_area3
+													,permit_biz_type_info
+													,goods_grp_limit_yn
+													,product_yn
+													,bid_price_type
+													,bid_total_sch_price_num
+													,bid_draw_sch_price_num
+													,asgn_bugt_price
+													,pre_price
+													,open_place
+													,notice_detail_link
+													,notice_detail_link_url
+													,bid_use_com_pay_yn
+													,bid_use_com_val
+													,bid_dept_com_pay_yn
+													,creditor_nm
+													,serial_no
+													,demand
+													,detail_goods_no
+													,detail_goods_nm
+													,stad_nm
+													,quantity
+													,unit
+													,unit_price
+													,dev_limit_dt
+													,dev_dt_num
+													,trans_cond_nm
+													,buy_target_goods_info
+													,main_notice_no
+													,lic_permit_biz_type
+													,part_sup_comp_type
+													,stad_notice_form
+													,branch_bid_use_yn
+													,nomi_comp
+													,bid_sch_price_upt_yn
+													,result_apply_form_reg_type
+													,result_apply_form_reg_dt
+													,use_area_info
+													,#{user} as create_id
+													,now() as create_dt
+													,#{user} as modify_id
+													,now() as modify_dt
+													,null as user_id
+													,null as bigo
+													,base_price
+													,'N' as important_yn
+													,'N' as manual_yn
+													,'N' as business_send_yn
+													,null as business_send_msg
+													,null as color_type
+													from tn_bid_notice_info where concat(bid_notice_no,'-',bid_notice_cha_no) = #{bid_notice_no}		    	    
+	</insert>
+	
+	<insert id="insertDistributionList2" parameterType="map">
+		<!-- insert into tn_bid_distribution_info_detail select * from tn_bid_notice_info_detail where concat(bid_notice_no,'-',bid_notice_cha_no) = #{bid_notice_no}	 -->    	    
+	</insert>
+	
+	<insert id="insertDistributionList3" parameterType="map">
+		<!-- insert into tn_bid_distribution_file select * from tn_bid_notice_file where concat(bid_notice_no,'-',bid_notice_cha_no) = #{bid_notice_no} -->	    	    
+	</insert>
+	
+	<insert id="insertDistributionList4" parameterType="map">
+		<!-- insert into tn_bid_distribution_base_price select * from tn_bid_notice_base_price where concat(bid_notice_no,'-',bid_notice_cha_no) = #{bid_notice_no} -->	    	    
+	</insert>
+	
+	<insert id="insertDistributionList5" parameterType="map">
+		<!-- insert into tn_bid_distribution_info_bidpro select * from tn_bid_notice_info_bidpro where concat(bid_no,'-',bid_cha_no) = #{bid_notice_no} -->	    	    
+	</insert>
+	
+	<insert id="insertDistributionList6" parameterType="map">
+		<!-- insert into tn_bid_distribution_info_risk select * from tn_bid_notice_info_risk where concat(bid_notice_no,'-',bid_notice_cha_no) = #{bid_notice_no} -->	    	    
+	</insert>
+	
+	<insert id="insertDistributionList7" parameterType="map">
+		<!-- insert into tn_bid_distribution_info_subj select * from tn_bid_notice_info_subj where concat(bid_notice_no,'-',bid_notice_cha_no) = #{bid_notice_no} -->	    	    
+	</insert>
+	
+	<insert id="insertDistributionList8" parameterType="map">
+		<!-- insert into tn_bid_distribution_range select * from tn_bid_notice_range where concat(bid_notice_no,'-',bid_notice_cha_no) = #{bid_notice_no} -->	    	    
+	</insert>
+	
+	<insert id="insertDistributionList9" parameterType="map">
+		<!-- insert into tn_bid_distribution_type select * from tn_bid_notice_type where concat(bid_notice_no,'-',bid_notice_cha_no) = #{bid_notice_no} -->	    	    
+	</insert>
+	
+	<update id="updateDistributionList" parameterType="map">
+	    /* 입찰공고분배 수정  (updateDistributionList) */		    
+	  		update tn_bid_distribution_info 
+	  										set user_id = #{user_id}, 
+	  										bigo = #{bigo}, 
+	  										important_yn = #{important_yn} 
+	  								where	concat(bid_notice_no,'-',bid_notice_cha_no) = #{bid_notice_no}
+	  										
+    </update>
+    
+    <select id="selectDisDtlCnt" parameterType="map" resultType="Integer">
+		SELECT count(*) 
+		from tn_bid_distribution_info 
+		where 
+			user_id != 'non'
+			<if test="user_chk!=null and !user_chk.equals('')">
+			and user_id = #{user_chk}
+			</if>
+			and concat(bid_notice_no,'-',bid_notice_cha_no) = #{bid_notice_no}
+	</select>
+	
+    <select id="selectDistributionDtl" parameterType="map" resultType="HashMap">
+		/* 입찰공고분배 상세조회  (selectDistributionDtl) */	
+	    SELECT *, (select user_nm from tn_user_info where user_id=A.user_id) as user_nm_txt 
+		from tn_bid_distribution_info A
+		left outer join
+		tn_bid_notice_file B
+		on A.bid_notice_no = B.bid_notice_no  
+		and A.bid_notice_cha_no = B.bid_notice_cha_no
+		left outer join
+		tn_bid_apply_info C
+		on A.bid_notice_no = C.bid_notice_no  
+		and A.bid_notice_cha_no = C.bid_notice_cha_no
+		where concat(A.bid_notice_no,'-',A.bid_notice_cha_no) = #{bid_notice_no}
+	</select>
+	
+	<update id="updateBidBaseAmount" parameterType="map">
+	    /* 기초공고 가져오기  (updateBidBaseAmount) */		    
+	  		update tn_bid_distribution_info 
+	  										set base_price = (select base_price from tn_bid_notice_info where concat(bid_notice_no,'-',bid_notice_cha_no) = #{bid_notice_no})	  								where	concat(bid_notice_no,'-',bid_notice_cha_no) = #{bid_notice_no}
+	  										
+    </update>
+    
+    <update id="updateBidDetailInfo" parameterType="map">
+	    <!-- /* 기초공고 가져오기  (updateBidBaseAmount) */		    
+	  		update tn_bid_notice_info_detail 
+	  										set s_range = (select s_range from tn_bid_notice_info_detail where concat(bid_notice_no,'-',bid_notice_cha_no) = #{bid_notice_no}),
+	  										e_range = (select e_range from tn_bid_notice_info_detail where concat(bid_notice_no,'-',bid_notice_cha_no) = #{bid_notice_no}),
+	  										column5 = (select column5 from tn_bid_notice_info_detail where concat(bid_notice_no,'-',bid_notice_cha_no) = #{bid_notice_no})
+	  								where	concat(bid_notice_no,'-',bid_notice_cha_no) = #{bid_notice_no} -->  									
+    </update>
+    
+    <select id="selectBidDtl" parameterType="map" resultType="HashMap">
+		/* 입찰관련 사용자 등록 정보 조회 (selectBidDtl) */	
+	    SELECT *, 
+		      fn_common_nm('business_license_cd',column2, null, null) as column2_nm, 
+			  fn_common_nm('business_scale_cd',column3, null, null) as column3_nm 	
+		from tn_bid_notice_info_detail
+		where bid_notice_no= #{bid_notice_no}
+		and bid_notice_cha_no = #{bid_notice_cha_no}
+	</select>
+    
+    <select id="selectBidSubj" parameterType="map" resultType="HashMap">
+		/* 입찰관련 과업정보 조회 (selectBidSubj) */	
+	    SELECT *, 
+		      fn_common_nm('bid_site_cd',bid_site, null, null) as bid_site_nm, 
+			  fn_common_nm('bid_risk_cd',bid_risk, null, null) as bid_risk_nm 	
+		from tn_bid_notice_info_subj
+		where bid_notice_no= #{bid_notice_no}
+		and bid_notice_cha_no = #{bid_notice_cha_no}
+	</select>
+	
+	<select id="selectBidRisk" parameterType="map" resultType="HashMap">
+		/* 입찰관련 리스크 정보 조회 (selectBidRisk) */	
+	    SELECT *
+		from tn_bid_notice_info_risk
+		where bid_notice_no= #{bid_notice_no}
+		and bid_notice_cha_no = #{bid_notice_cha_no}
+	</select>
+	
+	<select id="selectApplyInfo" parameterType="map" resultType="HashMap">
+	    /* 입찰공고 승인 상태  (selectApplyInfo) */	
+	    select  B.*
+			from tn_bid_distribution_info A, tn_bid_apply_info B 
+			where A.bid_notice_no = B.bid_notice_no
+			and A.bid_notice_cha_no = B.bid_notice_cha_no
+			and A.bid_notice_no= #{bid_notice_no} 
+			and A.bid_notice_cha_no = #{bid_notice_cha_no} 
+	</select>
+	
+	<select id="manufactureChk" parameterType="map" resultType="Integer">
+	    /* 제조사 등록여부 (manufactureChk) */	
+		SELECT count(*) as cnt  
+		from tn_bid_manufacture_rel
+		where 
+				bid_notice_no= #{bid_notice_no} 
+			and bid_notice_cha_no = #{bid_notice_cha_no} 
+			    		
+	</select>
+	
+	<select id="selectBizRelList" parameterType="map" resultType="HashMap">
+	    /* 입찰관련 제조업체 리스트  (selectBizRelList) */	
+	    select  B.business_no, B.company_type, B.company_nm, B.mobile_no, B.delegate, B.bidmanager, B.phone_no, B.fax_no, B.email, B.bigo,  A.bid_notice_no, 
+					A.bid_notice_cha_no 
+			from tn_bid_distribution_info A, tn_bid_company_info B
+			where A.bid_notice_no= #{bid_notice_no} 
+			and A.bid_notice_cha_no = #{bid_notice_cha_no} 
+			and B.GUBUN = 'B' 
+			and B.unuse_yn != 'Y'
+		    and (B.delegate_explain  like concat(concat('%',A.detail_goods_nm),'%')
+		    or B.delegate_explain2 LIKE concat(concat('%',A.detail_goods_nm),'%')
+			or B.delegate_explain3 LIKE concat(concat('%',A.detail_goods_nm),'%'))
+		    order by B.business_no asc
+	</select>
+	
+	<select id="selectBizManufactureList" parameterType="map" resultType="HashMap">
+	    /* 입찰관련 제조업체 리스트  (selectBizManufactureList) */	
+	    select  B.business_no, B.company_type, B.company_nm, B.mobile_no, B.delegate, B.bidmanager, B.phone_no, B.fax_no, B.email, 
+	    A.quotation, A.margin, A.send_yn, A.choice_yn, A.credit_yn, A.choice_reason, A.stock_yn, A.review, A.bigo,  A.bid_notice_no, A.bid_notice_cha_no 
+			from tn_bid_manufacture_rel A, tn_bid_company_info B
+			where A.business_no = B.business_no
+      		and bid_notice_no= #{bid_notice_no} 
+			and bid_notice_cha_no = #{bid_notice_cha_no}
+		    order by business_no asc
+	</select>
+	
+	<update id="updateBidDtl" parameterType="map">
+	    /* 입찰관련 상세 내용 저장  (updateBidDtl) */	
+		insert into tn_bid_notice_info_detail
+	    (bid_notice_no,
+	    bid_notice_cha_no,
+	    column1,
+	    column2,
+	    column3,
+	    column4,
+	    column5,
+	    column7,
+	    s_range,
+	    e_range,
+	    bigo,
+	    create_id,
+	    create_dt,
+	    modify_id,
+	    modify_dt
+	    )
+	    value(
+	    #{bid_notice_no},
+	    #{bid_notice_cha_no},
+	    #{column1},
+	    #{column2},
+	    #{column3},
+	    #{column4},
+	    #{column5},
+	    #{column7},
+	    #{s_range},
+	    #{e_range},
+	    #{bigo},
+	    #{user},
+	    sysdate(),
+	    #{user},
+	    sysdate()
+	    )
+	    ON DUPLICATE key
+		UPDATE
+		column1 =	#{column1},
+		column2 =	#{column2},
+		column3 =	#{column3},
+		column4 =	#{column4},
+		column5 =	#{column5},
+		column7 =	#{column7},
+		s_range =	#{s_range},
+		e_range =	#{e_range},
+		bigo =	#{bigo},
+		modify_id = #{user},
+		modify_dt = sysdate()
+	</update>
+	
+	<update id="updateBidList" parameterType="map">
+	    /* 입찰관련 기초가격 및 물품분류번호 정보 저장  (updateBidList) */	
+		update tn_bid_distribution_info
+		set		base_price = #{base_price},
+				notice_type = #{notice_type},
+				bid_notice_nm = #{bid_notice_nm},		
+				detail_goods_no = #{detail_goods_no},
+				detail_goods_nm = #{detail_goods_nm},				
+				order_agency_nm = #{order_agency_nm},
+				demand_nm = #{demand_nm},
+				contract_type_nm = #{contract_type_nm},
+				use_area_info = #{use_area_info},
+				product_yn = #{product_yn},
+				goods_grp_limit_yn = #{goods_grp_limit_yn},
+				permit_biz_type_info = #{permit_biz_type_info},
+				bid_start_dt = #{bid_start_dt},
+				bid_end_dt = #{bid_end_dt},
+				bid_open_dt = #{bid_open_dt},
+				bid_lic_reg_dt = #{bid_lic_reg_dt},
+				reg_user_nm = #{reg_user_nm},
+				reg_user_tel = #{reg_user_tel},
+				reg_user_mail = #{reg_user_mail},
+				pre_price = #{pre_price},							
+				modify_id = #{user},
+	    		modify_dt = sysdate()
+	    where	bid_notice_no = #{bid_notice_no}
+	    and		bid_notice_cha_no = #{bid_notice_cha_no}
+	</update>
+	
+	<update id="updateColorType" parameterType="map">
+	    /* 컬러 유형 변경  (updateColorType) */	
+		update tn_bid_distribution_info
+		set		color_type = #{color_type}
+	    where	bid_notice_no = #{bid_notice_no}
+	    and		bid_notice_cha_no = #{bid_notice_cha_no}
+	</update>
+	
+	<update id="updateBidRisk" parameterType="map">
+	    /* 입찰관련 리스크 정보 저장  (updateBidRisk) */	
+		insert into tn_bid_notice_info_risk
+	    (bid_notice_no,
+	    bid_notice_cha_no,
+	    risk_yn1,
+	    risk_yn2,
+	    risk_yn3,
+	    risk_yn4,
+	    risk_yn5,
+	    risk_yn6,
+	    risk_yn7,
+	    risk_yn8,
+	    risk_yn9,
+	    risk_yn10,
+	    risk_yn11,
+	    risk_yn14,
+	    risk_yn15
+	    )
+	    value(
+	    #{bid_notice_no},
+	    #{bid_notice_cha_no},
+	    #{risk_yn1},
+	    #{risk_yn2},
+	    #{risk_yn3},
+	    #{risk_yn4},
+	    #{risk_yn5},
+	    #{risk_yn6},
+	    #{risk_yn7},
+	    #{risk_yn8},
+	    #{risk_yn9},
+	    #{risk_yn10},
+	    #{risk_yn11},
+	    #{risk_yn14},
+	    #{risk_yn15}
+	    )
+	    ON DUPLICATE key
+		UPDATE
+		risk_yn1 =	#{risk_yn1},
+		risk_yn2 =	#{risk_yn2},
+		risk_yn3 =	#{risk_yn3},
+		risk_yn4 =	#{risk_yn4},
+		risk_yn5 =	#{risk_yn5},
+		risk_yn6 =	#{risk_yn6},
+		risk_yn7 =	#{risk_yn7},
+		risk_yn8 =	#{risk_yn8},
+		risk_yn9 =	#{risk_yn9},
+		risk_yn10 =	#{risk_yn10},
+		risk_yn11 =	#{risk_yn11},
+		risk_yn14 =	#{risk_yn14},
+		risk_yn15 =	#{risk_yn15}
+	</update>
+	
+	<update id="updateBidRisk2" parameterType="map">
+	    /* 입찰관련 리스크 정보 저장  (updateBidRisk2) */	
+		UPDATE tn_bid_notice_info_risk
+		set
+			risk_m_yn1 =	#{risk_m_yn1},
+			risk_m_yn2 =	#{risk_m_yn2},
+			risk_m_yn3 =	#{risk_m_yn3},
+			risk_m_yn4 =	#{risk_m_yn4},
+			risk_m_yn5 =	#{risk_m_yn5},
+			risk_m_yn6 =	#{risk_m_yn6},
+			risk_m_yn7 =	#{risk_m_yn7},
+			risk_m_yn8 =	#{risk_m_yn8},
+			risk_m_yn9 =	#{risk_m_yn9},
+			risk_m_yn10 =	#{risk_m_yn10},
+			risk_m_yn11 =	#{risk_m_yn11}	
+		where bid_notice_no = #{bid_notice_no}
+	    and bid_notice_cha_no = #{bid_notice_cha_no}
+	</update>
+	
+	<update id="updateBidSubj" parameterType="map">
+	    /* 입찰관련 사용자 서브 내용 저장  (updateBidSubj) */	
+		insert into tn_bid_notice_info_subj
+	    (bid_notice_no,
+	     bid_notice_cha_no,
+	     bid_cont,
+		 bid_site,
+		 bid_risk,
+		 bid_term,
+		 bid_stock_issue_yn,
+		 bid_num_of_days,
+		 bid_sp_cont,
+		 bid_tot_cont
+	    )
+	    value(
+	    #{bid_notice_no},
+	    #{bid_notice_cha_no},
+	    #{bid_cont},
+	    #{bid_site},
+	    #{bid_risk},
+	    #{bid_term},
+	    #{bid_stock_issue_yn},
+		#{bid_num_of_days},
+	    #{bid_sp_cont},
+	    #{bid_tot_cont}
+	    )
+	    ON DUPLICATE key
+		UPDATE
+		bid_cont = #{bid_cont},
+		bid_site = #{bid_site},
+		bid_risk = #{bid_risk},
+		bid_term = #{bid_term},
+		bid_stock_issue_yn = #{bid_stock_issue_yn},
+		bid_num_of_days = #{bid_num_of_days},
+		bid_sp_cont = #{bid_sp_cont},
+		bid_tot_cont = #{bid_tot_cont}
+	</update>
+	
+	<update id="deleteManufactureList" parameterType="map">
+	    /* 입찰공고 제조업체 초기화  (deleteManufactureList) */	
+	    delete from tn_bid_manufacture_rel
+	    where	bid_notice_no = #{bid_notice_no}
+	    and		bid_notice_cha_no = #{bid_notice_cha_no}
+		
+	</update>
+	
+	<update id="updateManufactureList" parameterType="map">
+	    /* 입찰공고 제조업체 신규 등록  (updateManufactureList) */	
+	    insert into tn_bid_manufacture_rel
+	    (bid_notice_no,
+	    bid_notice_cha_no,
+	    business_no,
+	    bigo,
+	    create_id,
+	    create_dt,
+	    modify_id,
+	    modify_dt
+	    )
+	    value(
+	    #{bid_notice_no},
+	    #{bid_notice_cha_no},
+	    #{business_no},
+	    #{bigo},
+	    #{user},
+	    sysdate(),
+	    #{user},
+	    sysdate()
+	    )
+	    ON DUPLICATE key
+		UPDATE
+		modify_id = #{user},
+		modify_dt = sysdate()
+		
+	</update>
+	
+	<update id="updateApply" parameterType="map">
+	     /* 견적승인요청  (updateApply) */	
+	    insert into tn_bid_apply_info
+	    (bid_notice_no,
+	    bid_notice_cha_no,
+	    apply_user_id1,
+	    status_step,
+	    status_cd1,
+	    status_cd2,
+	    apply_dt1,
+	    create_dt,
+	    modify_dt
+	    )
+	    value(
+	    #{bid_notice_no},
+	    #{bid_notice_cha_no},
+	    #{user},
+	    #{status_step},
+	    #{status_cd1},
+	    #{status_cd2},
+	    sysdate(),
+	    sysdate(),
+	    sysdate()
+	    )
+	    ON DUPLICATE key
+		UPDATE
+	    apply_user_id1 = #{user},
+	    status_step = #{status_step},
+	    status_cd1 = #{status_cd1},
+	    status_cd2 = #{status_cd2},
+	    apply_dt1 = sysdate(),
+		modify_dt = sysdate()
+	</update>
+	
+	<update id="updateApply2" parameterType="map">
+	     /* 견적승인  (updateApply2) */	
+		UPDATE tn_bid_apply_info
+		set
+				<choose>
+					<when test="type=='pass'">
+						status_step = '3',
+						status_cd2 = '002',
+						status_cd3 = '002',
+						apply_user_id2 = 'pass',
+						apply_user_id3 = 'pass',
+						apply_dt2 = sysdate(),
+						apply_dt3 = sysdate(),						
+					</when>
+					<when test="type==2">
+						<choose>
+							<when test="subType=='pass'">
+								status_step = '3',
+								status_cd2 = '002',
+								status_cd3 = '002',
+								apply_user_id2 = (select user_id from tn_user_info where team = (select A.team from tn_user_info A where A.user_id=#{user}) and role_cd = '2'),
+								apply_user_id3 = 'pass',
+								apply_dt2 = sysdate(),
+								apply_dt3 = sysdate(),
+							</when>
+							<when test="subType=='ok'">
+								status_step = '3',
+								status_cd2 = '002',
+								status_cd3 = '001',
+								apply_user_id2 = (select user_id from tn_user_info where team = (select A.team from tn_user_info A where A.user_id=#{user}) and role_cd = '2'),
+								apply_dt2 = sysdate(),
+							</when>
+							<when test="subType=='return'">
+								status_step = '1',
+								status_cd2 = '003',
+								apply_user_id2 = (select user_id from tn_user_info where team = (select A.team from tn_user_info A where A.user_id=#{user}) and role_cd = '2'),
+								apply_dt2 = sysdate(),
+							</when>
+						</choose>												
+					</when>
+					<when test="type==3">
+						<choose>
+							<when test="subType=='ok'">
+								status_step = '3',
+								status_cd3 = '002',
+								apply_user_id3 = (select user_id from tn_user_info where team = (select A.team from tn_user_info A where A.user_id=#{user}) and role_cd = '3'),
+								apply_dt3 = sysdate(),
+							</when>
+							<when test="subType=='return'">
+								status_step = '2',
+								status_cd3 = '003',
+								apply_user_id3 = (select user_id from tn_user_info where team = (select A.team from tn_user_info A where A.user_id=#{user}) and role_cd = '3'),
+								apply_dt3 = sysdate(),
+							</when>
+						</choose>						
+					</when>
+				</choose>
+		modify_dt = sysdate()
+		where bid_notice_no = #{bid_notice_no}
+		and bid_notice_cha_no =  #{bid_notice_cha_no}
+	</update>
+	
+	<update id="updateManufactureList2" parameterType="map">
+	    /* 입찰공고 제조업체 견적서 등록  (updateManufactureList2) */	
+	    update tn_bid_manufacture_rel
+	    set
+	    	quotation = #{quotation},
+	    	margin = #{margin},
+	    	send_yn = #{send_yn},
+	    	stock_yn = #{stock_yn},
+	    	choice_reason = #{choice_reason},
+	    	review = #{review},
+	    	choice_yn = #{choice_yn},
+	    	credit_yn = #{credit_yn},
+	    	modify_id = #{user},
+			modify_dt = sysdate()
+		where	bid_notice_no = #{bid_notice_no}
+	    and		bid_notice_cha_no = #{bid_notice_cha_no}
+	    and		business_no = #{business_no}
+		
+	</update>
+	
+	<update id="updateManufactureList3" parameterType="map">
+	    /* 입찰공고 제조업체 선택 등록  (updateManufactureList3) */	
+	    update tn_bid_manufacture_rel
+	    set
+	    	choice_yn = #{choice_yn},
+	    	modify_id = #{user},
+			modify_dt = sysdate()
+		where	bid_notice_no = #{bid_notice_no}
+	    and		bid_notice_cha_no = #{bid_notice_cha_no}
+	    and		business_no = #{business_no}
+		
+	</update>
+	
+	<update id="deleteManufactureChoice" parameterType="map">
+	    update tn_bid_manufacture_rel
+	    set
+	    	choice_yn = ''
+		where	bid_notice_no = #{bid_notice_no}
+	    and		bid_notice_cha_no = #{bid_notice_cha_no}
+		
+	</update>
+	
+	<update id="updateBidDtl2" parameterType="map">
+	    /* 입찰관련 감독관의견 저장  (updateBidDtl2) */	
+		update	tn_bid_notice_info_detail 
+		set
+			bigo =	#{bigo},
+			column4 =	#{column4},
+			modify_id = #{user},
+			modify_dt = sysdate()
+		where	bid_notice_no = #{bid_notice_no}
+	    and		bid_notice_cha_no = #{bid_notice_cha_no}
+			
+	</update>
+	
+	<update id="updateDrop" parameterType="map">
+	    /* Drop  (updateDrop) */	
+		insert into tn_bid_apply_info
+	    (bid_notice_no,
+	    bid_notice_cha_no,
+	    apply_user_id1,
+	    status_step,
+	    apply_dt1,
+	    create_dt,
+	    modify_dt
+	    )
+	    value(
+	    #{bid_notice_no},
+	    #{bid_notice_cha_no},
+	    #{user},
+	    #{status_step},
+	    sysdate(),
+	    sysdate(),
+	    sysdate()
+	    )
+	    ON DUPLICATE key
+		UPDATE
+	    apply_user_id1 = #{user},
+	    status_step = #{status_step},
+	    apply_dt1 = sysdate(),
+		modify_dt = sysdate()
+	</update>
+	
+	<update id="updatePick" parameterType="map">
+	    /* Drop  (updatePick) */
+	    delete from tn_bid_apply_info
+	    where	bid_notice_no = #{bid_notice_no}
+	    and		bid_notice_cha_no = #{bid_notice_cha_no}
+	</update>
+	
+    <select id="selectUserList" parameterType="map" resultType="HashMap">
+		/* 담당자 리스트  (selectUserList) */	
+		SELECT * from tn_user_info
+		where del_yn='N'
+	</select>
+	
+	<select id="selectComboList" parameterType="map" resultType="HashMap">
+	    /* 공통코드 조회  (selectComboList) */	
+		 SELECT * 
+         FROM tn_common_cd
+         WHERE del_yn='N'
+         <if test="cdGroupCd!=null">  
+		    AND (parent_cd is null   or length(parent_cd)=0)  
+		    AND cd_group_id = (select cd_group_id from tn_common_cd_group where cd_group_cd=#{cdGroupCd})  
+	     </if>  
+         <if test="cdGroupCd==null">
+		    <if test="cdId!=null">
+			    AND IFNULL(parent_cd,'') = (select IFNULL(cd,'')  from tn_common_cd where cd_id = #{cdId})    
+			    AND IFNULL(cd_group_id,'') = (select IFNULL(cd_group_id,'')  from tn_common_cd where cd_id = #{cdId})    
+			</if>
+		</if>
+         order by cd_group_id asc, depth asc, parent_cd asc, cd_seq
+	</select>
+	
+	<select id="manufactureList" parameterType="map" resultType="HashMap">
+	    /* 제조업체 리스트  (manufactureList) */	
+	    SELECT A.*, fn_common_nm('main_area_cd',address, null, null) as address_nm
+		FROM tn_bid_company_info A
+		WHERE A.GUBUN = 'B'
+		and A.unuse_yn != 'Y'
+		<if test="s_business_no!=null and !s_business_no.equals('')">  and business_no like CONCAT('%', #{s_business_no}, '%')            </if>
+		<if test="s_business_nm!=null and !s_business_nm.equals('')">  and company_nm like CONCAT('%', #{s_business_nm}, '%')            </if>
+	</select>
+	
+	<update id="insertBidMessage" parameterType="map">
+	    /* 발신메세지 저장  (insertBidMessage) */	
+	    insert into tn_bid_message_his
+	    (
+	    <!-- message_id, -->
+	    bid_notice_no,
+	    bid_notice_cha_no,
+	    message_type,
+	    catagory,
+	    business_no,
+	    subject,
+	    message,
+	    sms_key,
+	    sender,
+	    receiver,
+	    send_id,
+	    send_dt,
+	    confirm_yn  
+	    )
+	    value(
+	    <!-- (select ifnull(max(message_id)+1,0) from tn_bid_message_his B where business_no = #{business_no} and bid_notice_no = #{bid_notice_no} and bid_notice_cha_no = #{bid_notice_cha_no}), -->
+	    #{bid_notice_no},
+	    #{bid_notice_cha_no},
+	    #{message_type},
+	    #{catagory},
+	    #{business_no},
+	    #{subject},
+	    #{message},
+	    #{sms_key},
+	    #{sender},
+	    #{receiver},
+	    #{send_id},
+	    sysdate(),
+	    'N'
+	    )
+	</update>
+	
+	<update id="updateBusinessRelList" parameterType="map">
+	    /* 입찰공고 투찰업체 등록  (updateBusinessRelList) */	
+	    insert into tn_bid_business_rel
+	    (bid_notice_no,
+	    bid_notice_cha_no,
+	    business_no,
+	    send_yn,
+	    send_message,
+	    send_dt,
+	    margin,
+	    bidding_price,
+	    bigo,
+	    create_id,
+	    create_dt,
+	    modify_id,
+	    modify_dt
+	    )
+	    value(
+	    #{bid_notice_no},
+	    #{bid_notice_cha_no},
+	    #{business_no},
+	    #{send_yn},
+	    #{message},
+	    sysdate(),
+	    #{margin},
+	    #{bidding_price},
+	    #{bigo},
+	    #{user},
+	    sysdate(),
+	    #{user},
+	    sysdate()
+	    )
+	    ON DUPLICATE key
+		UPDATE
+		send_yn =	#{send_yn},
+		send_dt =	sysdate(),
+		send_message =	#{message},
+		modify_id = #{user},
+		modify_dt = sysdate()				
+	</update>
+	
+	<update id="scheduleDrop" parameterType="map">
+		insert into tn_bid_apply_info
+		    (bid_notice_no,
+		    bid_notice_cha_no,
+		    apply_user_id1,
+		    status_step,
+		    status_cd1,
+		    apply_dt1,
+		    create_dt,
+		    modify_dt
+		    )
+		    value(
+		    #{bid_notice_no},
+		    #{bid_notice_cha_no},
+		    'win4net',
+		    '0',
+		    '001',
+		    sysdate(),
+		    sysdate(),
+		    sysdate()
+		    )
+		    ON DUPLICATE key
+			UPDATE
+		    status_step = '0'	
+	</update>
+	
+	<select id="selectScheduleDropList" parameterType="map" resultType="HashMap">		    
+	    Select A.bid_notice_no, A.bid_notice_cha_no
+		From tn_bid_distribution_info A
+	    Left Outer Join tn_bid_apply_info B
+	    On A.bid_notice_no = B.bid_notice_no
+	    and A.bid_notice_cha_no = B.bid_notice_cha_no
+			Where A.bid_end_dt <![CDATA[<]]> Date_Format(Now(),'%Y%m%d%H%i')
+	    And B.status_step Not In ('0')
+	    and B.status_cd3 Not In ('002')
+	</select>
+	
+	<update id="insertBidNotice" parameterType="map">
+		insert into tn_bid_distribution_info (
+												bid_type
+												,bid_notice_no
+												,bid_notice_cha_no
+												,notice_type
+												,bid_notice_nm
+												,detail_goods_nm
+												,use_area_info
+												,bid_end_dt
+												,bid_lic_reg_dt
+												,pre_price
+												,create_id
+												,create_dt
+												,modify_id
+												,modify_dt
+												,manual_yn
+											)
+								values(
+										'물품'
+										,#{bid_notice_no}
+										,#{bid_notice_cha_no}
+										,#{notice_type}								
+										,#{bid_notice_nm}
+										,#{detail_goods_nm}
+										,#{use_area_info}
+										,#{bid_end_dt}
+										,#{bid_lic_reg_dt}
+										,#{pre_price}
+										,#{user}
+										,now()
+										,#{user}
+										,now() 
+										,'Y'
+										)
+												
+	</update>
+	
+	<select id="selectEstimateList" parameterType="map" resultType="HashMap">
+	    /* 입찰공고에 대한 견적요청 제조사 리스트  (bid-Sql-Map.selectEstimateList) */	
+	    select  B.business_no, B.company_type, B.company_nm, B.mobile_no, B.delegate, A.* 
+			from tn_bid_company_info B, tn_bid_manufacture_rel A 
+			where A.business_no = B.business_no
+			and A.bid_notice_no= #{bid_notice_no} 
+			and A.bid_notice_cha_no = #{bid_notice_cha_no} 
+			and B.GUBUN = 'B' 
+			and B.unuse_yn != 'Y'
+			<if test="choice_yn!=null">  
+				and A.choice_yn = 'Y'
+			</if>
+			and B.BUSINESS_NO = A.business_no
+	</select>
+	
+	<select id="selectBidApplyList" parameterType="map" resultType="HashMap">
+		/* 입찰공고 리스트 (apply-Sql-Map.selectBidApplyList) */	
+		SELECT  (select user_nm from tn_user_info where user_id=A.user_id) user_nm,
+				(select user_nm from tn_user_info where user_id=C.apply_user_id1) user_nm1,
+				(select user_nm from tn_user_info where user_id=C.apply_user_id2) user_nm2,
+				(select user_nm from tn_user_info where user_id=C.apply_user_id3) user_nm3,
+				date_format(C.apply_dt1,'%Y.%m.%d %H:%i:%S') apply_dt_nm1,
+				date_format(C.apply_dt2,'%Y.%m.%d %H:%i:%S') apply_dt_nm2,
+				date_format(C.apply_dt3,'%Y.%m.%d %H:%i:%S') apply_dt_nm3,
+				fn_common_nm('apply_status_cd',status_cd1, null, null) status_nm1,
+				fn_common_nm('apply_status_cd',status_cd2, null, null) status_nm2,
+				fn_common_nm('apply_status_cd',status_cd3, null, null) status_nm3,
+				fn_file_nm(file_id) as file_nm,
+				A.*,B.*,C.*
+		from 
+		tn_bid_distribution_info A
+		left outer join
+		tn_bid_notice_file B
+		on A.bid_notice_no = B.bid_notice_no  
+		and A.bid_notice_cha_no = B.bid_notice_cha_no
+		,
+		tn_bid_apply_info C
+		where  A.bid_notice_no = C.bid_notice_no  
+		and A.bid_notice_cha_no = C.bid_notice_cha_no
+			<if test="bid_notice_no!=null and !bid_notice_no.equals('')">
+			    and A.bid_notice_no = #{bid_notice_no} 
+			</if>
+			<if test="bid_notice_cha_no!=null and !bid_notice_cha_no.equals('')">
+			    and A.bid_notice_cha_no = #{bid_notice_cha_no}  
+			</if>
+				
+	</select>
+	
+	<select id="selectScheduleJoinList" parameterType="map" resultType="HashMap">
+		SELECT A.bid_notice_no,A.bid_notice_cha_no 
+		FROM tn_bid_open_result_info A,
+		tn_bid_apply_info B
+		WHERE
+		    A.bid_notice_no = B.bid_notice_no
+		AND A.bid_notice_cha_no = B.bid_notice_cha_no
+		And  B.status_cd3 = '002'
+		AND date_format(SUBSTR(A.bid_open_dt,1,8),'%Y%m%d') <![CDATA[>=]]> Date_Format(date_add(now(), interval -30 day),'%Y%m%d')
+		And Date_Format(Substr(A.bid_open_dt,1,8),'%Y%m%d') <![CDATA[<=]]> Date_Format(date_add(now(), interval +7 day),'%Y%m%d')
+		And join_com_cnt = 0
+	</select>
+	
+	<select id="selectBidOpenResultComptByCnt" parameterType="map" resultType="Integer">
+		select count(*)
+		from tn_bid_open_result_compt A, tn_bid_company_info B
+		where A.bid_notice_no = #{bid_notice_no}
+		and   A.bid_notice_cha_no = #{bid_notice_cha_no}
+		and   A.biz_reg_no= replace(B.company_no,'-','')
+		and   B.unuse_yn != 'Y'
+	</select>
+	
+	<update id="updateOpengResultListInfoThng" parameterType="map" >
+		UPDATE tn_bid_open_result_info
+		set join_com_cnt = #{join_com_cnt}
+		where	bid_notice_no = #{bid_notice_no}
+	    and		bid_notice_cha_no = #{bid_notice_cha_no}
+	</update>
+	
+	<select id="selectBigoDtl" parameterType="map" resultType="HashMap">
+	    /*  의견 가져오기  (selectBigoDtl) */
+	     SELECT column4, bigo
+		from tn_bid_notice_info_detail 
+		where	bid_notice_no = #{bid_notice_no}
+	    and		bid_notice_cha_no = #{bid_notice_cha_no}
+	</select>
+	
+	<select id="selectBigoDtl2" parameterType="map" resultType="HashMap">
+	    /*  의견 가져오기  (selectBigoDtl2) */
+	     SELECT status_step, status_cd1, status_cd2, status_cd3
+		from tn_bid_apply_info 
+		where	bid_notice_no = #{bid_notice_no}
+	    and		bid_notice_cha_no = #{bid_notice_cha_no}
+	</select>
+	
+	<update id="updateBigo" parameterType="map">
+	    /* 의견 저장  (updateBigo) */
+	    insert into tn_bid_notice_info_detail
+		    (bid_notice_no,
+		    bid_notice_cha_no,
+		    column4,
+		    bigo
+		    )
+		    value(
+		    #{bid_notice_no},
+		    #{bid_notice_cha_no},
+		    #{column4},
+		    #{bigo}
+		    )
+		    ON DUPLICATE key
+			UPDATE
+		    column4 = #{column4},
+		    bigo = #{bigo}
+	  										
+    </update>
+    
+    <update id="updateBigo2" parameterType="map">
+	    /* 의견 저장  (updateBigo2) */	
+	    insert into tn_bid_apply_info
+		    (bid_notice_no,
+		    bid_notice_cha_no,
+		    status_step
+		    )
+		    value(
+		    #{bid_notice_no},
+		    #{bid_notice_cha_no},
+		    <choose><when test="status_step.equals('nvl')">null</when><otherwise>#{status_step}</otherwise></choose>
+		    )
+		    ON DUPLICATE key
+			UPDATE
+		    status_step =<choose><when test="status_step.equals('nvl')">null</when><otherwise>#{status_step}</otherwise></choose>	  										
+    </update>
+</mapper>

@@ -1,0 +1,20 @@
+/* 
+ * www.sait.samsung.com master CSS file
+ * Copyright (c) 2012 UPSIDE Corporation
+ */
+ 
+html,body, div, span, applet, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, abbr, acronym, address, big, cite, code, del, dfn, em, font, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, li, fieldset, form, label, legend{margin:0px;padding:0px;border:0px;outline:0px;font-size : 9pt;color:#5E5E5E;line-height:13pt;height:auto;}
+img{margin:0px;padding:0px;border:0px;outline:0px;}
+
+A:link { text-decoration : none; color : #5E5E5E; }
+A:visited { text-decoration : none; color : #5E5E5E; }
+A:active { text-decoration : none; color : #5E5E5E; }
+A:hover { text-decoration : underline; color : #000;}
+
+
+
+#footer {width:100%;height:85px;background:url(../images/footer.gif) top left no-repeat;}
+
+ 
+/*#cont table   {width:900px;  padding:3px 3px 3px 15px;cursor:hand;}*/
+/*#cont table tr   {cursor:hand}*/

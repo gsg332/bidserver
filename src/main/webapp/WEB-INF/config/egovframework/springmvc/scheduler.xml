@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+		http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+		http://www.springframework.org/schema/context 
+		http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/task
+		http://www.springframework.org/schema/task/spring-task-3.0.xsd">
+
+	<!-- 스케줄러 생성 -->
+	<!-- pool-size 지정하지 않을 경우 쓰레드 풀의 기본값은 1 -->
+	<task:scheduler id="scheduler" pool-size="5" />
+
+	<!-- 스케줄링 -->
+	<!-- <task:scheduled-tasks> 태그의 scheduler 속성은 작업을 실행할 스케줄러 빈을 설정 -->
+	<!-- <task:scheduled-tasks> 태그는 한개 이상의 <task:scheduled> 태그를 가질수있음 <task:scheduled> 
+		태그는 스케줄러를 통해서 실행될 작업을 설정. -->
+	<!-- <task:scheduled> 태그는 작업을 언제 실행할지의 여부를 지정하기 위해서 다음 세가지 속성중 한가지를 사용 1. 
+		cron : cron 표현식을 이용해서 실행 시간을 표현 2. fixed-delay : 지정된 시간 간격으로 작업을 실행 3. fixed-rate 
+		: 지정한 시간 주기로 작업을 실행 => 위 속성을 여러개 지정할 경우 위 순서대로 우선순위 적용 -->
+
+	<task:scheduled-tasks scheduler="scheduler">
+		<!-- <task:scheduled ref="scheduleController" method="userRemove" cron="0 
+			0/30 0 * * *" /> -->
+		<task:scheduled ref="scheduleController" method="dataBackUp"
+			cron="0 0 0/2 * * *" />
+		<task:scheduled ref="scheduleController" method="dataBackUp2"
+			cron="0 0 0/5 * * *" />
+		<task:scheduled ref="scheduleController" method="disDrop"
+			cron="0 0,10,20,30,40,50 * * * *" />
+		<task:scheduled ref="scheduleController" method="joinCnt"
+			cron="0 0,10,20,30,40,50 * * * *" />
+		<task:scheduled ref="scheduleController" method="limitCheck"
+			cron="0 0 0 * * *" />
+	</task:scheduled-tasks>
+
+	<bean id="scheduleController" class="egovframework.com.bidserver.schedule.web.ScheduleController" />
+
+</beans>

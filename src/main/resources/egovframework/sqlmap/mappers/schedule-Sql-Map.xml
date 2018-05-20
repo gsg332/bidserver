@@ -1,0 +1,748 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.com.bidserver.schedule.service.impl.PublicDataMapper">
+
+
+
+	<update id="updateBidPblancListInfoThng" parameterType="map" >
+	    /* 물품 입찰공고 등록 및 수정 (schedule-Sql-Map.updateBidPblancListInfoThng) */
+		INSERT INTO tn_bid_notice_info
+		(	
+			bid_type,
+			bid_notice_no,
+			bid_notice_cha_no,
+			reg_type,
+			notice_type,
+			nation_bid_yn,
+			noti_dt,
+			ref_no,
+			bid_notice_nm,
+			order_agency_cd,
+			order_agency_nm,
+			demand_no,
+			demand_nm,
+			bid_method,
+			contract_type_nm,
+			reg_user_nm,
+			reg_user_tel,
+			reg_user_mail,
+			executor_nm,
+			bid_lic_reg_dt,
+			part_sup_yn,
+			part_sup_agree_form_reg_dt,
+			part_sup_area_limit_yn,
+			bid_start_dt,
+			bid_end_dt,
+			bid_open_dt,
+			re_bid_permit_yn,
+			bid_use_area1,
+			bid_use_area2,
+			bid_use_area3,
+			permit_biz_type_info,
+			goods_grp_limit_yn,
+			product_yn,
+			bid_price_type,
+			bid_total_sch_price_num,
+			bid_draw_sch_price_num,
+			asgn_bugt_price,
+			pre_price,
+			open_place,
+			notice_detail_link,
+			notice_detail_link_url,
+			bid_use_com_pay_yn,
+			bid_use_com_val,
+			bid_dept_com_pay_yn,
+			creditor_nm,
+			serial_no,
+			demand,
+			detail_goods_no,
+			detail_goods_nm,
+			stad_nm,
+			quantity,
+			unit,
+			unit_price,
+			dev_limit_dt,
+			dev_dt_num,
+			trans_cond_nm,
+			buy_target_goods_info,
+			main_notice_no,
+			lic_permit_biz_type,
+			part_sup_comp_type,
+			stad_notice_form,
+			branch_bid_use_yn,
+			nomi_comp,
+			bid_sch_price_upt_yn,
+			result_apply_form_reg_type,
+			result_apply_form_reg_dt,
+			use_area_info,
+			create_id,
+			create_dt,
+			modify_id,
+			modify_dt
+		)
+		VALUES
+		(
+			#{bid_type},
+			#{bid_notice_no},
+			#{bid_notice_cha_no},
+			#{reg_type},
+			#{notice_type},
+			#{nation_bid_yn},
+			#{noti_dt},
+			#{ref_no},
+			#{bid_notice_nm},
+			#{order_agency_cd},
+			#{order_agency_nm},
+			#{demand_no},
+			#{demand_nm},
+			#{bid_method},
+			#{contract_type_nm},
+			#{reg_user_nm},
+			#{reg_user_tel},
+			#{reg_user_mail},
+			#{executor_nm},
+			#{bid_lic_reg_dt},
+			#{part_sup_yn},
+			#{part_sup_agree_form_reg_dt},
+			#{part_sup_area_limit_yn},
+			#{bid_start_dt},
+			#{bid_end_dt},
+			#{bid_open_dt},
+			#{re_bid_permit_yn},
+			#{bid_use_area1},
+			#{bid_use_area2},
+			#{bid_use_area3},
+			#{permit_biz_type_info},
+			#{goods_grp_limit_yn},
+			#{product_yn},
+			#{bid_price_type},
+			#{bid_total_sch_price_num},
+			#{bid_draw_sch_price_num},
+			#{asgn_bugt_price},
+			#{pre_price},
+			#{open_place},
+			#{notice_detail_link},
+			#{notice_detail_link_url},
+			#{bid_use_com_pay_yn},
+			#{bid_use_com_val},
+			#{bid_dept_com_pay_yn},
+			#{creditor_nm},
+			#{serial_no},
+			#{demand},
+			#{detail_goods_no},
+			#{detail_goods_nm},
+			#{stad_nm},
+			#{quantity},
+			#{unit},
+			#{unit_price},
+			#{dev_limit_dt},
+			#{dev_dt_num},
+			#{trans_cond_nm},
+			#{buy_target_goods_info},
+			#{main_notice_no},
+			#{lic_permit_biz_type},
+			#{part_sup_comp_type},
+			#{stad_notice_form},
+			#{branch_bid_use_yn},
+			#{nomi_comp},
+			#{bid_sch_price_upt_yn},
+			#{result_apply_form_reg_type},
+			#{result_apply_form_reg_dt},
+			#{use_area_info},
+			'administrater',
+			sysdate(),
+			'administrater',
+			sysdate()
+		)
+		ON DUPLICATE key
+		UPDATE
+		bid_type		= #{bid_type},
+		reg_type		= #{reg_type},
+		notice_type		= #{notice_type},
+		nation_bid_yn		= #{nation_bid_yn},
+		noti_dt		= #{noti_dt},
+		ref_no		= #{ref_no},
+		bid_notice_nm		= #{bid_notice_nm},
+		order_agency_cd		= #{order_agency_cd},
+		order_agency_nm		= #{order_agency_nm},
+		demand_no		= #{demand_no},
+		demand_nm		= #{demand_nm},
+		bid_method		= #{bid_method},
+		contract_type_nm		= #{contract_type_nm},
+		reg_user_nm		= #{reg_user_nm},
+		reg_user_tel		= #{reg_user_tel},
+		reg_user_mail		= #{reg_user_mail},
+		executor_nm		= #{executor_nm},
+		bid_lic_reg_dt		= #{bid_lic_reg_dt},
+		part_sup_yn		= #{part_sup_yn},
+		part_sup_agree_form_reg_dt		= #{part_sup_agree_form_reg_dt},
+		part_sup_area_limit_yn		= #{part_sup_area_limit_yn},
+		bid_start_dt		= #{bid_start_dt},
+		bid_end_dt		= #{bid_end_dt},
+		bid_open_dt		= #{bid_open_dt},
+		re_bid_permit_yn		= #{re_bid_permit_yn},
+		bid_use_area1		= #{bid_use_area1},
+		bid_use_area2		= #{bid_use_area2},
+		bid_use_area3		= #{bid_use_area3},
+		permit_biz_type_info		= #{permit_biz_type_info},
+		goods_grp_limit_yn		= #{goods_grp_limit_yn},
+		product_yn		= #{product_yn},
+		bid_price_type		= #{bid_price_type},
+		bid_total_sch_price_num		= #{bid_total_sch_price_num},
+		bid_draw_sch_price_num		= #{bid_draw_sch_price_num},
+		asgn_bugt_price		= #{asgn_bugt_price},
+		pre_price		= #{pre_price},
+		open_place		= #{open_place},
+		notice_detail_link		= #{notice_detail_link},
+		notice_detail_link_url		= #{notice_detail_link_url},
+		bid_use_com_pay_yn		= #{bid_use_com_pay_yn},
+		bid_use_com_val		= #{bid_use_com_val},
+		bid_dept_com_pay_yn		= #{bid_dept_com_pay_yn},
+		creditor_nm		= #{creditor_nm},
+		serial_no		= #{serial_no},
+		demand		= #{demand},
+		detail_goods_no		= #{detail_goods_no},
+		detail_goods_nm		= #{detail_goods_nm},
+		stad_nm		= #{stad_nm},
+		quantity		= #{quantity},
+		unit		= #{unit},
+		unit_price		= #{unit_price},
+		dev_limit_dt		= #{dev_limit_dt},
+		dev_dt_num		= #{dev_dt_num},
+		trans_cond_nm		= #{trans_cond_nm},
+		buy_target_goods_info		= #{buy_target_goods_info},
+		main_notice_no		= #{main_notice_no},
+		lic_permit_biz_type		= #{lic_permit_biz_type},
+		part_sup_comp_type		= #{part_sup_comp_type},
+		stad_notice_form		= #{stad_notice_form},
+		branch_bid_use_yn		= #{branch_bid_use_yn},
+		nomi_comp		= #{nomi_comp},
+		bid_sch_price_upt_yn		= #{bid_sch_price_upt_yn},
+		result_apply_form_reg_type		= #{result_apply_form_reg_type},
+		result_apply_form_reg_dt		= #{result_apply_form_reg_dt},
+		use_area_info		= #{use_area_info},
+		modify_id = 'administrater',
+		modify_dt = sysdate()
+
+	</update>
+	
+	<update id="updateBidPblancListInfoThngFile" parameterType="map">
+	    /* 물품 입찰공고 기타 등록 및 수정 (schedule-Sql-Map.updateBidPblancListInfoThngFile) */
+		INSERT INTO tn_bid_notice_file
+		(
+			bid_notice_no,
+			bid_notice_cha_no,
+			notice_spec_form1,
+			notice_spec_form2,
+			notice_spec_form3,
+			notice_spec_form4,
+			notice_spec_form5,
+			notice_spec_form6,
+			notice_spec_form7,
+			notice_spec_form8,
+			notice_spec_form9,
+			notice_spec_form10,
+			lic_limit_nm1,
+			lic_limit_nm2,
+			lic_limit_nm3,
+			lic_limit_nm4,
+			lic_limit_nm5,
+			lic_limit_nm6,
+			lic_limit_nm7,
+			lic_limit_nm8,
+			lic_limit_nm9,
+			lic_limit_nm10,
+			lic_limit_nm11,
+			lic_limit_nm12,
+			notice_spec_file_nm1,
+			notice_spec_file_nm2,
+			notice_spec_file_nm3,
+			notice_spec_file_nm4,
+			notice_spec_file_nm5,
+			notice_spec_file_nm6,
+			notice_spec_file_nm7,
+			notice_spec_file_nm8,
+			notice_spec_file_nm9,
+			notice_spec_file_nm10,
+			create_id,
+			create_dt,
+			modify_id,
+			modify_dt
+		)
+		VALUES
+		(
+			#{bid_notice_no},
+			#{bid_notice_cha_no},
+			#{notice_spec_form1},
+			#{notice_spec_form2},
+			#{notice_spec_form3},
+			#{notice_spec_form4},
+			#{notice_spec_form5},
+			#{notice_spec_form6},
+			#{notice_spec_form7},
+			#{notice_spec_form8},
+			#{notice_spec_form9},
+			#{notice_spec_form10},
+			#{lic_limit_nm1},
+			#{lic_limit_nm2},
+			#{lic_limit_nm3},
+			#{lic_limit_nm4},
+			#{lic_limit_nm5},
+			#{lic_limit_nm6},
+			#{lic_limit_nm7},
+			#{lic_limit_nm8},
+			#{lic_limit_nm9},
+			#{lic_limit_nm10},
+			#{lic_limit_nm11},
+			#{lic_limit_nm12},
+			#{notice_spec_file_nm1},
+			#{notice_spec_file_nm2},
+			#{notice_spec_file_nm3},
+			#{notice_spec_file_nm4},
+			#{notice_spec_file_nm5},
+			#{notice_spec_file_nm6},
+			#{notice_spec_file_nm7},
+			#{notice_spec_file_nm8},
+			#{notice_spec_file_nm9},
+			#{notice_spec_file_nm10},
+			'administrater',
+			sysdate(),
+			'administrater',
+			sysdate()
+		)
+		ON DUPLICATE key
+		UPDATE
+		notice_spec_form1		= #{notice_spec_form1},
+		notice_spec_form2		= #{notice_spec_form2},
+		notice_spec_form3		= #{notice_spec_form3},
+		notice_spec_form4		= #{notice_spec_form4},
+		notice_spec_form5		= #{notice_spec_form5},
+		notice_spec_form6		= #{notice_spec_form6},
+		notice_spec_form7		= #{notice_spec_form7},
+		notice_spec_form8		= #{notice_spec_form8},
+		notice_spec_form9		= #{notice_spec_form9},
+		notice_spec_form10		= #{notice_spec_form10},
+		lic_limit_nm1			= #{lic_limit_nm1},
+		lic_limit_nm2			= #{lic_limit_nm2},
+		lic_limit_nm3			= #{lic_limit_nm3},
+		lic_limit_nm4			= #{lic_limit_nm4},
+		lic_limit_nm5			= #{lic_limit_nm5},
+		lic_limit_nm6			= #{lic_limit_nm6},
+		lic_limit_nm7			= #{lic_limit_nm7},
+		lic_limit_nm8			= #{lic_limit_nm8},
+		lic_limit_nm9			= #{lic_limit_nm9},
+		lic_limit_nm10			= #{lic_limit_nm10},
+		lic_limit_nm11			= #{lic_limit_nm11},
+		lic_limit_nm12			= #{lic_limit_nm12},
+		notice_spec_file_nm1	= #{notice_spec_file_nm1},
+		notice_spec_file_nm2	= #{notice_spec_file_nm2},
+		notice_spec_file_nm3	= #{notice_spec_file_nm3},
+		notice_spec_file_nm4	= #{notice_spec_file_nm4},
+		notice_spec_file_nm5	= #{notice_spec_file_nm5},
+		notice_spec_file_nm6	= #{notice_spec_file_nm6},
+		notice_spec_file_nm7	= #{notice_spec_file_nm7},
+		notice_spec_file_nm8	= #{notice_spec_file_nm8},
+		notice_spec_file_nm9	= #{notice_spec_file_nm9},
+		notice_spec_file_nm10	= #{notice_spec_file_nm10},
+		modify_id				= 'administrater',
+		modify_dt				= sysdate()
+	</update>
+	
+	<update id="updateBidPblancListInfoPrtcptPsblRgn" parameterType="map" >
+		/* 물품 입찰공고 참가가능지역 등록 (schedule-Sql-Map.updateBidPblancListInfoPrtcptPsblRgn) */
+		UPDATE tn_bid_notice_info 
+		SET 
+			use_area_info = IF(use_area_info IS NULL, #{prtcpt_psbl_rgn_nm}, CONCAT(use_area_info, ',', #{prtcpt_psbl_rgn_nm}))
+		WHERE bid_notice_no = #{bid_notice_no}
+		AND bid_notice_cha_no = #{bid_notice_cha_no}
+	</update>
+
+	<update id="updateBidPblancListInfoThngBsisAmount" parameterType="map" >
+	    /* 물품 입찰공고 기초금액 등록 및 수정 (schedule-Sql-Map.updateBidPblancListInfoThngBsisAmount) */
+		INSERT INTO tn_bid_notice_base_price
+		(
+			bid_notice_no,
+			bid_notice_cha_no,
+			bid_detail_num,
+			bid_notice_nm,
+			base_sch_price,
+			base_price_open_dt,
+			sch_price_term_from,
+			sch_price_term_to,
+			base_eval_price,
+			level_num,
+			base_order_percent,
+			base_normal_manage_percent,
+			base_margin_percent,
+			base_work_percent,
+			industry_manage_price,
+			retire_price,
+			environment_price,
+			guarantee_charge,
+			n_health_price,
+			n_annuity_price,
+			note1,
+			note2,
+			using_price
+		)
+		VALUES
+		(
+			#{bid_notice_no},
+			#{bid_notice_cha_no},
+			#{bid_detail_num},
+			#{bid_notice_nm},
+			#{base_sch_price},
+			#{base_price_open_dt},
+			#{sch_price_term_from},
+			#{sch_price_term_to},
+			#{base_eval_price},
+			#{level_num},
+			#{base_order_percent},
+			#{base_normal_manage_percent},
+			#{base_margin_percent},
+			#{base_work_percent},
+			#{industry_manage_price},
+			#{retire_price},
+			#{environment_price},
+			#{guarantee_charge},
+			#{n_health_price},
+			#{n_annuity_price},
+			#{note1},
+			#{note2},
+			#{using_price}
+		)
+		ON DUPLICATE key
+		UPDATE
+		bid_notice_nm		=	#{bid_notice_nm},
+		base_sch_price		=	#{base_sch_price},
+		base_price_open_dt	=	#{base_price_open_dt},
+		sch_price_term_from	=	#{sch_price_term_from},
+		sch_price_term_to	=	#{sch_price_term_to},
+		base_eval_price		=	#{base_eval_price},
+		level_num			=	#{level_num},
+		base_order_percent	=	#{base_order_percent},
+		base_normal_manage_percent	=	#{base_normal_manage_percent},
+		base_margin_percent			=	#{base_margin_percent},
+		base_work_percent			=	#{base_work_percent},
+		industry_manage_price		=	#{industry_manage_price},
+		retire_price		=	#{retire_price},
+		environment_price	=	#{environment_price},
+		guarantee_charge	=	#{guarantee_charge},
+		n_health_price		=	#{n_health_price},
+		n_annuity_price		=	#{n_annuity_price},
+		note1				=	#{note1},
+		note2				=	#{note2},
+		using_price			=	#{using_price}
+	</update>
+	
+	<update id="updateBidPblancListInfoThngBsisAmountCopy" parameterType="map" >
+		/* 물품 입찰공고 기초금액 복사 (schedule-Sql-Map.updateBidPblancListInfoThngBsisAmountCopy) */
+		UPDATE tn_bid_notice_info 
+		set
+		base_price = (select sum(base_sch_price) 
+						from tn_bid_notice_base_price 
+						where bid_notice_no		=	#{bid_notice_no}
+						and bid_notice_cha_no		=	#{bid_notice_cha_no})
+		where bid_notice_no		=	#{bid_notice_no}
+		and bid_notice_cha_no		=	#{bid_notice_cha_no}
+
+	</update>
+	
+	<update id="updateDetailPrdnmFndThngClSystmStrdInfo" parameterType="map" >
+	    /* 세부품목 등록 및 수정 (schedule-Sql-Map.updateDetailPrdnmFndThngClSystmStrdInfo) */
+	    INSERT INTO tn_bid_goods_info
+		(
+			goods_no,
+			goods_nm
+		)
+		VALUES
+		(
+			#{goods_no},
+			#{goods_nm}
+		)
+	    ON DUPLICATE key
+		UPDATE
+		goods_nm = #{goods_nm}
+	</update>
+	
+	<update id="updateScsbidListSttusThng" parameterType="map" >
+	    /* 최종낙찰자 등록 및 수정 (schedule-Sql-Map.updateScsbidListSttusThng) */
+		INSERT INTO tn_bid_contect_info
+		(
+			 bid_notice_no
+			,bid_notice_cha_no
+			,bid_part_type
+			,bid_biz_re_seq_no
+			,bid_notice_type
+			,bid_notice_nm
+			,cont_biz_num
+			,cont_biz_nm
+			,biz_reg_no
+			,biz_owner_nm
+			,biz_addr
+			,biz_tel
+			,cont_price
+			,cont_percent
+		)
+		VALUES
+		(
+			 #{bid_notice_no}
+			,#{bid_notice_cha_no}
+			,#{bid_part_type}
+			,#{bid_biz_re_seq_no}
+			,#{bid_notice_type}
+			,#{bid_notice_nm}
+			,#{cont_biz_num}
+			,#{cont_biz_nm}
+			,#{biz_reg_no}
+			,#{biz_owner_nm}
+			,#{biz_addr}
+			,#{biz_tel}
+			,#{cont_price}
+			,#{cont_percent}
+		)
+		ON DUPLICATE key
+		UPDATE
+		 bid_part_type = #{bid_part_type}
+		,bid_biz_re_seq_no = #{bid_biz_re_seq_no}
+		,bid_notice_type = #{bid_notice_type}
+		,bid_notice_nm = #{bid_notice_nm}
+		,cont_biz_num = #{cont_biz_num}
+		,cont_biz_nm = #{cont_biz_nm}
+		,biz_reg_no = #{biz_reg_no}
+		,biz_owner_nm = #{biz_owner_nm}
+		,biz_addr = #{biz_addr}
+		,biz_tel = #{biz_tel}
+		,cont_price = #{cont_price}
+		,cont_percent = #{cont_percent}
+	</update>
+	
+	<update id="updateOpengResultListInfoThng" parameterType="map" >
+	    /* 물품 개찰완료 등록 및 수정 (schedule-Sql-Map.updateOpengResultListInfoThng) */
+		INSERT INTO tn_bid_open_result_info
+		(
+			 bid_notice_no
+			,bid_notice_cha_no
+			,bid_type
+			,bid_biz_re_seq_no
+			,bid_notice_nm
+			,bid_open_dt
+			,cont_biz_num
+			,cont_biz_info
+			,bid_step_type
+			,input_dt
+			,sch_price_use_yn
+			,join_req_com_cnt
+			,join_com_cnt
+		)
+		VALUES
+		(
+			 #{bid_notice_no}
+			,#{bid_notice_cha_no}
+			,#{bid_type}
+			,#{bid_biz_re_seq_no}
+			,#{bid_notice_nm}
+			,#{bid_open_dt}
+			,#{cont_biz_num}
+			,#{cont_biz_info}
+			,#{bid_step_type}
+			,#{input_dt}
+			,#{sch_price_use_yn}
+			,#{join_req_com_cnt}
+			,#{join_com_cnt}
+		)
+		ON DUPLICATE key
+		UPDATE
+		 bid_type = #{bid_type}
+		,bid_notice_nm = #{bid_notice_nm}
+		,bid_open_dt = #{bid_open_dt}
+		,cont_biz_num = #{cont_biz_num}
+		,cont_biz_info = #{cont_biz_info}
+		,bid_step_type = #{bid_step_type}
+		,input_dt = #{input_dt}
+		,sch_price_use_yn = #{sch_price_use_yn}
+		,join_req_com_cnt = #{join_req_com_cnt}
+		,join_com_cnt = #{join_com_cnt}
+	</update>
+	
+	<update id="updateOpengResultListInfoThngPreparPcDetail" parameterType="map" >
+	    /* 물품 개찰완료 예비가격 상세 등록 및 수정 (schedule-Sql-Map.updateOpengResultListInfoThngPreparPcDetail) */
+		INSERT INTO tn_bid_open_result_price_detail
+		(
+			 bid_notice_no
+			,bid_notice_cha_no
+			,bid_type
+			,bid_biz_re_seq_no
+			,bid_notice_nm
+			,sche_price
+			,base_price
+			,bid_sch_total_price_num
+			,open_seq_no
+			,base_sche_price
+			,draw_result_yn
+		)
+		VALUES
+		(
+			 #{bid_notice_no}
+			,#{bid_notice_cha_no}
+			,#{bid_type}
+			,#{bid_biz_re_seq_no}
+			,#{bid_notice_nm}
+			,#{sche_price}
+			,#{base_price}
+			,#{bid_sch_total_price_num}
+			,#{open_seq_no}
+			,#{base_sche_price}
+			,#{draw_result_yn}
+		)
+		ON DUPLICATE key
+		UPDATE
+	 	 bid_type = #{bid_type}
+		,bid_biz_re_seq_no = #{bid_biz_re_seq_no}
+		,bid_notice_nm = #{bid_notice_nm}
+		,sche_price = #{sche_price}
+		,base_price = #{base_price}
+		,bid_sch_total_price_num = #{bid_sch_total_price_num}
+		,open_seq_no = #{open_seq_no}
+		,base_sche_price = #{base_sche_price}
+		,draw_result_yn = #{draw_result_yn}
+	</update>
+	
+	<update id="updateOpengResultListInfoOpengCompt" parameterType="map" >
+	    /* 물품 개찰완료목록 상세 등록 및 수정 (schedule-Sql-Map.updateOpengResultListInfoOpengCompt) */
+		INSERT INTO tn_bid_open_result_compt
+		(
+			 bid_step_type
+			,bid_notice_no
+			,bid_notice_cha_no
+			,bid_type
+			,bid_biz_re_seq_no
+			,open_rank
+			,biz_reg_no
+			,biz_nm
+			,biz_owner_nm
+			,bid_price
+			,bid_percent
+			,note
+			,bid_price_link
+		)
+		VALUES
+		(
+			 #{bid_step_type}
+			,#{bid_notice_no}
+			,#{bid_notice_cha_no}
+			,#{bid_type}
+			,#{bid_biz_re_seq_no}
+			,#{open_rank}
+			,#{biz_reg_no}
+			,#{biz_nm}
+			,#{biz_owner_nm}
+			,#{bid_price}
+			,#{bid_percent}
+			,#{note}
+			,#{bid_price_link}
+		)
+		ON DUPLICATE key
+		UPDATE
+		 bid_type = #{bid_type}
+		,bid_biz_re_seq_no = #{bid_biz_re_seq_no}
+		,open_rank = #{open_rank}
+		,biz_nm = #{biz_nm}
+		,biz_owner_nm = #{biz_owner_nm}
+		,bid_price = #{bid_price}
+		,bid_percent = #{bid_percent}
+		,note = #{note}
+		,bid_price_link = #{bid_price_link}
+	</update>
+
+	<update id="updateOpengResultListInfoFailinb" parameterType="map" >
+		/* 물품 유찰목록 상세 등록 및 수정 (schedule-Sql-Map.updateOpengResultListInfoFailinb) */
+	    INSERT INTO tn_bid_open_result_fail
+		(
+			 bid_step_type
+			,bid_notice_no
+			,bid_notice_cha_no
+			,bid_type
+			,bid_biz_re_seq_no
+			,non_cont_reason
+		)
+		VALUES
+		(
+			 #{bid_step_type}
+			,#{bid_notice_no}
+			,#{bid_notice_cha_no}
+			,#{bid_type}
+			,#{bid_biz_re_seq_no}
+			,#{non_cont_reason}
+		)
+		ON DUPLICATE key
+		UPDATE
+		 bid_type = #{bid_type}
+		,bid_biz_re_seq_no = #{bid_biz_re_seq_no}
+		,non_cont_reason = #{non_cont_reason}
+	</update>
+	
+	<update id="updateOpengResultListInfoRebid" parameterType="map" >
+	    /* 물품 재입찰목록 상세 등록 및 수정 (schedule-Sql-Map.updateOpengResultListInfoRebid) */
+		INSERT INTO tn_bid_open_result_rebid
+		(
+			 bid_step_type
+			,bid_notice_no
+			,bid_notice_cha_no
+			,bid_type
+			,bid_biz_re_seq_no
+			,bid_end_dt
+			,bid_open_dt
+			,re_cont_reason
+			,part_sup_agree_form_reg_dt
+		)
+		VALUES
+		(
+			 #{bid_step_type}
+			,#{bid_notice_no}
+			,#{bid_notice_cha_no}
+			,#{bid_type}
+			,#{bid_biz_re_seq_no}
+			,#{bid_end_dt}
+			,#{bid_open_dt}
+			,#{re_cont_reason}
+			,#{part_sup_agree_form_reg_dt}
+		)
+		ON DUPLICATE key
+		UPDATE
+		 bid_type = #{bid_type}
+		,bid_biz_re_seq_no = #{bid_biz_re_seq_no}
+		,bid_end_dt = #{bid_end_dt}
+		,bid_open_dt = #{bid_open_dt}
+		,re_cont_reason = #{re_cont_reason}
+		,part_sup_agree_form_reg_dt = #{part_sup_agree_form_reg_dt}
+	</update>
+	
+	<update id="removeBizGoodsDirectPastLimitDt" parameterType="map">
+		/* 직접생산 만료일 지난 목록 삭제 (removeBizGoodsDirectLimit) */
+	    DELETE FROM tn_bid_business_goods_direct
+		WHERE IF(limit_dt != '' AND limit_dt IS NOT NULL AND LENGTH(limit_dt) = 8, DATE_FORMAT(limit_dt, '%Y%m%d') &lt; DATE_FORMAT(NOW(), '%Y%m%d'), 1=0) 
+	</update>
+	
+	<update id="removeBizLicensePastLimitDt" parameterType="map">
+		/* 적격 만료일 지난 목록 삭제 (removeBizLicenseLimit) */
+	    DELETE FROM tn_bid_business_license
+		WHERE IF(limit_dt != '' AND limit_dt IS NOT NULL AND LENGTH(limit_dt) = 8, DATE_FORMAT(limit_dt, '%Y%m%d') &lt; DATE_FORMAT(NOW(), '%Y%m%d'), 1=0) 
+	</update>
+	
+	<update id="updateScaleCdPastLimitDt" parameterType="map">
+		/* 기업규모 만료일 지난 목록 기업규모코드 변경 (updateScaleCdPastLimitDt) */
+	    UPDATE tn_bid_company_detail
+		SET scale_cd = (select DISTINCT(eval_cd) FROM tn_eval_info WHERE eval_group = '신용평가' AND eval_type = '기업규모' AND eval_nm = '없음')
+		WHERE IF(scale_dt != '' AND scale_dt IS NOT NULL AND LENGTH(scale_dt) = 8, DATE_FORMAT(scale_dt, '%Y%m%d') &lt; DATE_FORMAT(NOW(), '%Y%m%d'), 1=0) 
+	</update>
+	
+	<update id="updateCreditCdPastLimitDt" parameterType="map">
+		/* 신용등급 만료일 지난 목록 신용등급코드 변경 (updateCreditCdPastLimitDt) */
+	    UPDATE tn_bid_company_detail
+		SET credit_cd = (select DISTINCT(eval_cd) FROM tn_eval_info WHERE eval_group = '신용평가' AND eval_type = '신용평가' AND eval_nm = '없음')
+		WHERE IF(credit_dt != '' AND credit_dt IS NOT NULL AND LENGTH(credit_dt) = 8, DATE_FORMAT(credit_dt, '%Y%m%d') &lt; DATE_FORMAT(NOW(), '%Y%m%d'), 1=0)
+	</update>
+	
+</mapper>

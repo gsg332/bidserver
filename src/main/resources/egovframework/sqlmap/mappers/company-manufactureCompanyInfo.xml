@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.com.bidserver.sever.company.manufactureCompany.service.impl.ManufactureCompanyMapper">
+	
+	
+	<resultMap type="egovframework.com.bidserver.bid.entity.BidInfo" id="resultMap-Test" >		                              
+	
+			<result column="bid_notice_no"							 property="bid_notice_no"/>       
+			<result column="bid_notice_cha_no"						property="bid_notice_cha_no"/>    
+			<result column="bid_part_type"							 property="bid_part_type"/>       
+			<result column="bid_biz_re_seq_no"						property="bid_biz_re_seq_no"/>    
+			<result column="bid_notice_type"							property="bid_notice_type"/>     
+			<result column="bid_notice_nm"							 property="bid_notice_nm"/>       
+			<result column="cont_biz_num"							   property="cont_biz_num"/>        
+			<result column="cont_biz_nm"							   property="cont_biz_nm"/>         
+			<result column="biz_reg_no"							     property="biz_reg_no"/>          
+			<result column="biz_owner_nm"							   property="biz_owner_nm"/>        
+			<result column="biz_addr"							       property="biz_addr"/>            
+			<result column="biz_tel"							       property="biz_tel"/>             
+			<result column="cont_price"							     property="cont_price"/>          
+			<result column="cont_percent"							   property="cont_percent"/>    
+	
+			
+	</resultMap>
+	<select id="selectTest" resultMap="resultMap-Test">		
+	/* 테스트 조회 */	    
+	  
+		SELECT 
+				   bid_notice_no,
+				   bid_notice_cha_no,
+				   bid_part_type,
+				   bid_biz_re_seq_no,
+				   bid_notice_type,
+				   bid_notice_nm,
+				   cont_biz_num,
+				   cont_biz_nm,
+				   biz_reg_no,
+				   biz_owner_nm,
+				   biz_addr,
+				   biz_tel,
+				   cont_price,
+				   cont_percent
+		FROM g2b_bidding_contect_info
+    </select>
+    
+   
+ 
+</mapper>

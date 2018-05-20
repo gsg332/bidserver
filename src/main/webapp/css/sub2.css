@@ -1,0 +1,204 @@
+
+.stitle{
+	width:710px;
+	height:20px;
+	line-height:20px;
+	font-weight:bold;
+	font-size:14px;
+	color:#4e6487;
+	background:#c2ccd5;
+	text-align:left;
+	padding:5px 10px;
+}
+
+.summary_t01{
+	margin:20px;
+}
+
+.summary_t01 li{
+	list-style-type:decimal;
+	font-size:13px;
+	color:#333;
+	text-align:left;
+	margin:5px 20px;
+	padding:10px 0;
+	font-weight:bold;
+}
+
+.summary_t01 li dl{
+	clear:both;
+	margin:5px 0;
+}
+.summary_t01 li dt{
+	float:left;
+	font-size:12px;
+	color:#4d4d4d;
+	font-weight:bold;
+	width:100px;
+	line-height:25px;
+}
+
+.summary_t01 li dd{
+	font-size:12px;
+	font-weight:normal;
+	color:#4d4d4d;
+	line-height:25px;
+	padding:0 10px;
+}
+
+
+/* Default Setting */
+
+/* div.template * {margin: 0; padding: 0; line-height: 1; font-family: Dotum, sans-serif; font-size: 11px; color: #767676;} */
+
+div.template li {list-style: none;}
+div.template a {display: inline-block; text-decoration: none; cursor: pointer; *display: inline; *zoom: 1;}
+div.template img {border: 0; vertical-align:middle;}
+
+
+/* Button Styles */
+
+div.template div.button {text-align: center;}
+
+div.template ul.button {*zoom: 1;}
+div.template ul.button:after {content: ""; display: block; clear: both;}
+div.template ul.button.center {display: inline-block; *display: inline; *zoom: 1;}
+div.template ul.button.left {float: left;}
+div.template ul.button.right {float: right;}
+
+div.template ul.button li {float: left; margin: 2px 0 1px 5px; padding-left: 4px !important; background: url(../../images/bbs/bgBtnCompactL.png) no-repeat; line-height: 0; font-size: 0;}
+div.template ul.button li a {padding-right: 4px; background: url(../../images/bbs/bgBtnCompactR.png) no-repeat 100% 0;}
+div.template ul.button li a span {display: inline-block; padding: 8px; background: #efefef; line-height: 1; font-size: 11px; font-weight: bold; color: #888; cursor: pointer; *display: inline; *zoom: 1;}
+div.template ul.button li:first-child {margin-left: 0;}
+
+div.template ul.button li.blue {padding: 0; background: url(../../images/bbs/bgBtnBlueL.png) no-repeat;}
+div.template ul.button li.blue a {background: url(../../images/bbs/bgBtnBlueR.png) no-repeat 100% 0;}
+div.template ul.button li.blue a span {padding: 9px 17px; background: #00c2f3; font-size: 12px; color: #fff;}
+
+div.template ul.button li.white {padding: 0; background: url(../../images/bbs/bgBtnWhiteL.png) no-repeat;}
+div.template ul.button li.white a {background: url(../../images/bbs/bgBtnWhiteR.png) no-repeat 100% 0;}
+div.template ul.button li.white a span {padding: 7px 17px; border-top: solid 2px #ddd; border-bottom: solid 2px #ddd; background: #fdfdfd; font-size: 12px; color: #848484;}
+
+div.template ul.button li.gray {padding: 0; background: url(../../images/bbs/bgBtnGrayL.png) no-repeat;}
+div.template ul.button li.gray a {background: url(../../images/bbs/bgBtnGrayR.png) no-repeat 100% 0;}
+div.template ul.button li.gray a span {padding: 9px 17px; background: #848484; font-size: 12px; color: #fff;}
+
+div.template ul.button li.admin a span {padding-left: 20px; background: #efefef url(../../images/bbs/icnAdmin.png) no-repeat 8px 6px;}
+
+
+/* Selectbox Styles */
+
+div.template div.select {width: 107px; background: url(../../images/bbs/bgSelect.png) no-repeat; vertical-align: middle; text-align: left; color: #969696;}
+div.template div.select a.value {display: block; padding: 7px 8px; line-height: 13px;}
+div.template div.select ul {display: none; padding: 6px 0 5px; border: solid 1px #ddd; border-top: none; background: #fff; z-index: 5;}
+div.template div.select li a {padding: 4px 7px; line-height: 13px;}
+div.template div.select.on ul {display: block;}
+
+div.template table div.select {position: relative;}
+div.template table div.select ul {position: absolute; top: 27px; left: 0; width: 105px;}
+
+
+/* Checkbox Styles (+ Label) */
+
+div.template a.check {width: 15px; height: 15px; background: url(../../images/bbs/objChk.png) no-repeat; vertical-align: middle; line-height: 0; font-size: 0;}
+div.template a.check.on {background: url(../../images/bbs/objChkOn.png) no-repeat;}
+
+div.template label {margin-left: 5px; line-height: 13px; font-size: 11px; color: #808080; vertical-align: middle;}
+
+
+ 
+
+
+/* File down link */
+a.template.board.atag {color:#8b2;}
+a.template.board.atag:link {text-decoration:underline; color:#8b2;}
+a.template.board.atag:visited {text-decoration:underline; color:#8b2;}
+a.template.board.atag:hover {text-decoration:underline; color:#8b2;font-weight:bold;}
+a.template.board.atag:active {text-decoration:underline; color:#8b2;font-weight:bold;}
+
+/* Board : Common */
+div.template.board {position: relative; width: 980px; margin: 40px;}
+div.template.board a {color: #767676;}
+
+div.template.board p.stats {margin-bottom: 15px;}
+div.template.board p.stats span.count {color: #00c2f3;}
+
+div.template.board div.search {position: absolute; top: 0px; right: 25px; padding-left: 82px; text-align: center; z-index: 10;}
+div.template.board div.search div.select {position: absolute; top: 0; left: 0; width: 77px; background: url(../../images/bbs/bgSelectSearch.png) no-repeat; *margin-top: 1px;}
+div.template.board div.search input.keyword {width: 110px; padding: 7px 36px 7px 10px; border: none; background: url(../../images/bbs/bgTxtSearch.png); color: #969696;}
+div.template.board div.search a.search {position: absolute; top: 5px; right: 10px; z-index: 5;}
+
+div.template.board div.button {*zoom: 1;}
+div.template.board div.button:after {content: ""; display: block; clear: both;}
+
+
+/* div.template.board div.pagination {padding-top: 40px; text-align: center; line-height: 0; font-size: 0; *margin-top: 40px; *padding-top: 0;} */
+/* div.template.board div.pagination a {width: 25px; padding: 7px 0; border-top: solid 1px #ddd; border-bottom: solid 1px #ddd; border-right: solid 1px #ddd; background: #fff; text-align: center; vertical-align: middle; line-height: 1; font-size: 12px; color: #010101;} */
+/* div.template.board div.pagination a.first {border-left: solid 1px #ddd;} */
+/* div.template.board div.pagination a.on {background: #efefef; font-weight: bold; color: #00c2f3;} */
+/* div.template.board div.pagination a.arrow {width: 27px; padding: 0; border: none; line-height: 0; font-size: 0;} */
+
+
+/* Board : List */
+
+/* div.template.board.list table {width: 100%; margin:50px auto 15px auto;  border-top: solid 2px #969696; z-index: 5; padding:0;}*/ 
+
+
+/*  div.template.board.list th, div.template.board.list td {line-height: 13px;}   */
+/*  div.template.board.list th {height: 35px; border-bottom: solid 1px #cbcbcb; background:#f4f4f4;}  */
+/*  div.template.board.list th.title {text-align:center; border-left:solid 1px #cbcbcb;}  */
+
+/* div.template.board.list tr:first-child th.title:first-child {border-left:none;} */
+/* div.template.board.list td {height: 40px; border-bottom: solid 1px #e4e4e4; text-align: center;} */
+/* div.template.board.list td.notice {font-weight: bold;} */
+/* div.template.board.list td.left {text-align: left;} */
+/* div.template.board.list td a.check {margin-top: -1px; margin-right: 5px; *margin-top: 0;} */
+
+/* div.template.board.list td a.subject {width: 365px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; line-height: 13px;} */
+/* div.template.board.list td span {display: inline-block; height: 11px; margin-left: 4px; vertical-align: middle; *display: inline; *zoom: 1;} */
+/* div.template.board.list td span.comment {display: inline; width: auto; height: auto; line-height: 14px; font-size: 11px; color: #0099bf;} */
+/* div.template.board.list td span.new {width: 9px; background: url(../../images/bbs/icnNew.png) no-repeat;} */
+/* div.template.board.list td span.hot {width: 9px; background: url(../../images/bbs/icnHot.png) no-repeat;} */
+/* div.template.board.list td span.download {width: 10px; background: url(../../images/bbs/icnDownload.png) no-repeat;} */
+/* div.template.board.list td span.link {width: 7px; background: url(../../images/bbs/icnLink.png) no-repeat;} */
+/* div.template.board.list td span.lock {width: 10px; background: url(../../images/bbs/icnLock.png) no-repeat;} */
+
+
+/* Board : Write */
+
+div.template.board.write {width:85%;}
+div.template.board.write p.title {padding-bottom: 14px; font-size: 16px; font-weight: bold; color: #333; letter-spacing: -1px;}
+
+div.template.board.write table {width: 100%; margin-bottom: 0px; border-top: solid 1px #969696; padding:0;}
+div.template.board.write th, div.template.board.write td {height: 27px; padding: 1px 1px; border-bottom: solid 1px #efefef; }
+div.template.board.write th {padding-left: 11px; text-align: left; line-height: 14px; font-size: 12px; font-weight: bold; color: #767676; background:#f4f4f4;}
+div.template.board.write th.option {*width: 50px;}
+div.template.board.write th.add {padding-top: 18px; vertical-align: top;}
+div.template.board.write th.add div {padding: 10px 0 0 7px; line-height: 0; font-size: 0;}
+div.template.board.write th.add div a {margin-left: 4px; *margin-left: 3px;}
+div.template.board.write th div.add a:first-child {margin-left: 0;}
+div.template.board.write td a.check {margin-left: 10px;}
+div.template.board.write td a.check:first-child {margin-left: 0;}
+div.template.board.write td ul.button {display: inline-block; margin-left: 2px; vertical-align: middle; *display: inline; *zoom: 1;}
+div.template.board.write tr.gray th, div.template.board.write tr.gray td {height: 27px; padding-bottom: 0; border-bottom: none; background: #fdfdfd;}
+div.template.board.write tr.gray.first th, div.template.board.write tr.gray.first td {height: auto; padding-top: 12px;}
+div.template.board.write tr.gray.last th, div.template.board.write tr.gray.last td {height: auto; padding-bottom: 12px;}
+div.template.board.write tr.body th, div.template.board.write tr.body td {border-bottom: solid 1px #d5d5d5;}
+div.template.board.write tr.captcha td {border-top: solid 1px #d5d5d5;}
+div.template.board.write tr.captcha img {vertical-align: middle;}
+div.template.board.write tr.captcha input[type="text"] {margin-left: 20px; vertical-align: middle;}
+div.template.board.write tr.captcha span.tip {margin-left: 15px; padding-left: 17px; background: url(../../image/common/icnInfo.png) no-repeat; vertical-align: middle; color: #b5b5b5;}
+
+div.template.board.write table.join th {width: 116px;}
+div.template.board.write table.join td span.plural, div.template.board.write table.join td label.plural {display: inline-block; vertical-align: middle; line-height: 15px; *display: inline; *zoom: 1;}
+div.template.board.write table.join td span.alert {margin-left: 15px; color: #e76565}
+div.template.board.write table.join td span.caution {margin-left: 15px; color: #b5b5b5;}
+div.template.board.write table.join td a.calendar {margin-left: 5px; vertical-align: middle;}
+div.template.board.write table.join tr.captcha td {border-top: none;}
+
+
+ 
+ 
+ 
+ 
+ 

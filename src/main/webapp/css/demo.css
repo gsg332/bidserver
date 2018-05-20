@@ -1,0 +1,256 @@
+
+*{
+	font-size:12px;
+}
+body {
+    font-family:verdana,helvetica,arial,sans-serif;
+/*     padding:10px; */
+    font-size:12px;
+    margin:0;
+}
+h2 {
+    font-size:18px;
+    font-weight:bold;
+    margin:0;
+    margin-bottom:15px;
+}
+.demo-info{
+	padding:0 0 12px 0;
+}
+.demo-tip{
+	display:none;
+}
+.header{
+	background: #ef463b;
+	color: #fff;
+	direction: ltr;
+}
+.header .navbar{
+	margin-bottom: 0;
+	display: inline-block;
+	vertical-align: middle;
+}
+.header a,.header a:hover{
+	color: #fff;
+	line-height: 50px;
+}
+.header .content{
+	padding: 0.5em 4.5%;
+}
+.content{
+	padding: 2em;
+	padding-left: 5%;
+	padding-right: 5%;
+/* 	max-width: 1230px; */
+	margin: 0 auto;
+}
+.content-doc{
+	padding: 1.5%;
+	font-size: 14px;
+}
+.content-striped{
+	background: #fafafa;
+}
+.content-splash{
+	background: #2d3e50;
+	color: #fff;
+	border-top: 1px solid #48698a;
+	min-height: 292px;
+}
+.content-bg1{
+	background-image: url('images/bg1.png');
+	background-repeat: no-repeat;
+	background-position: center bottom;
+}
+.content-splash h1{
+	color: #fff;
+}
+.content-subhead{
+	color: #1f8dd6;
+}
+@media only screen and (max-width:767px) {
+	#elogo{
+		display: none;
+	}
+	#navbar-1{
+		display: none;
+	}
+	#navbar-2{
+		display: none;
+	}
+}
+.navigation-toggle{
+	background: #2d3e50;
+	color: #fff;
+/* 	background-image: url('images/navmenu.png'); */
+	background-position: left center;
+	background-repeat: no-repeat;
+}
+.navigation-toggle::after{
+	content: '';
+}
+.navigation-toggle.navigation-toggle-show{
+	margin: 0;
+}
+h4{
+	color: #2575ed;
+	margin: 0.5em 0;
+}
+/* NavBar */
+.navbar {
+  font-size: 105%;
+  margin-bottom: 1.65em;
+}
+.navbar:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.navbar:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.navbar.navbar-left {
+  float: left;
+}
+.navbar.navbar-right {
+  float: right;
+}
+.navbar ul {
+  list-style: none;
+  margin: 0;
+}
+.navbar ul:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.navbar ul:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.navbar li {
+  float: left;
+  margin-right: 1.65em;
+}
+.navbar.navbar-right li {
+  margin-right: 0;
+  margin-left: 1.65em;
+}
+.navbar a,
+.navbar span {
+  display: block;
+  text-decoration: none;
+}
+.navbar a:hover {
+  color: #de2c3b;
+  text-decoration: underline;
+}
+.navbar li.active a,
+.navbar span {
+  text-decoration: none;
+  cursor: text;
+  color: rgba(0, 0, 0, 0.4);
+}
+.navigation-toggle {
+  display: none;
+  text-transform: uppercase;
+  position: relative;
+  color: #0f0f0f;
+  background-color: #ffffff;
+}
+.navigation-toggle:after {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  margin-top: -12px;
+  left: 10px;
+  content: "\2630";
+  font-size: 24px;
+  line-height: 1;
+}
+.navigation-toggle.navigation-toggle-black {
+  background-color: #0f0f0f;
+  color: #ffffff;
+}
+.navigation-toggle.navigation-toggle-show {
+  margin-bottom: 1.65em;
+}
+.navigation-toggle span {
+  position: relative;
+  z-index: 2;
+  cursor: pointer;
+  display: block;
+  padding: 10px 20px 10px 40px;
+}
+.navigation-fixed {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 101;
+}
+/* Pills */
+.navbar-pills a,
+.navbar-pills span {
+  padding: 0.825em 1.65em;
+}
+.navbar-pills a:hover {
+  color: #0f0f0f;
+  background: #eee;
+}
+.navbar-pills li.active a,
+.navbar-pills span {
+  text-decoration: none;
+  cursor: text;
+  color: rgba(0, 0, 0, 0.4);
+  background: #eee;
+}
+.navbar-pills li {
+  margin-right: 1px;
+}
+.navbar-pills.navbar-right li {
+  margin-left: 1px;
+}
+/* Fullwidth */
+.fullwidth ul {
+  width: 100%;
+}
+.fullwidth li {
+  float: none !important;
+  margin: 0;
+  display: table-cell;
+  width: 1%;
+  text-align: center;
+}
+.fullwidth li a,
+.fullwidth li span {
+  display: block;
+}
+
+/* =Navigation Responsive
+-----------------------------------------------------------------------------*/
+@media only screen and (max-width: 767px) {
+  .navbar.navbar-left,
+  .navbar.navbar-right,
+  .navbar li,
+  .navbar.navbar-left li,
+  .navbar.navbar-right li {
+    float: none;
+    text-align: left;
+    width: auto;
+  }
+  .navbar li,
+  .navbar.navbar-right li {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  .fullwidth ul,
+  .fullwidth li {
+    width: auto;
+  }
+  .fullwidth li {
+    display: block;
+  }
+}

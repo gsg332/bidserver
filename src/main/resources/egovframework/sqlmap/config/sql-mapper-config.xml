@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL" />
+	</settings>
+
+	<typeAliases>
+
+		<typeAlias alias="bidcompany"
+			type="egovframework.com.bidserver.sever.company.bidCompany.entity.Bidcompany" />
+
+		<typeAlias alias="bidInfo2"
+			type="egovframework.com.bidserver.bid.entity.BidInfo2" />
+					 		
+		
+	</typeAliases>
+
+
+	
+	<mappers>
+
+		<mapper resource="egovframework/sqlmap/mappers/admin-Sql-Map.xml" />
+		<mapper resource="egovframework/sqlmap/mappers/bid-Sql-Map.xml" />
+		<mapper resource="egovframework/sqlmap/mappers/file-Sql-Map.xml" />
+		<mapper resource="egovframework/sqlmap/mappers/manufacture-Sql-Map.xml" />
+		<mapper resource="egovframework/sqlmap/mappers/mobile-Sql-Map.xml" />
+		<mapper resource="egovframework/sqlmap/mappers/business-Sql-Map.xml" />
+		<mapper resource="egovframework/sqlmap/mappers/apply-Sql-Map.xml" />
+		<mapper resource="egovframework/sqlmap/mappers/user-Sql-Map.xml" />
+		<mapper resource="egovframework/sqlmap/mappers/schedule-Sql-Map.xml" />
+		<mapper resource="egovframework/sqlmap/mappers/project-Sql-Map.xml" />
+		<mapper resource="egovframework/sqlmap/mappers/notice-Sql-Map.xml" />
+		<mapper resource="egovframework/sqlmap/mappers/distribution-Sql-Map.xml" />
+		<mapper resource="egovframework/sqlmap/mappers/opening-Sql-Map.xml" />
+		<mapper resource="egovframework/sqlmap/mappers/enterprise-Sql-Map.xml" />
+		<mapper resource="egovframework/sqlmap/mappers/analysis-Sql-Map.xml" />
+		
+<!-- 		<mapper resource="egovframework/sqlmap/mappers/company-bidCompany.xml" /> -->
+		<mapper
+			resource="egovframework/sqlmap/mappers/company-manufactureCompanyInfo.xml" />
+
+
+	</mappers>
+
+</configuration>

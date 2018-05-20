@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="egovframework.com.bidserver.admin.service.impl.AdminMapper">
+
+
+	<select id="selectUserList" parameterType="map" resultType="HashMap">
+	    select *, case when role_cd ='1' then '담당자'
+	    			   when role_cd ='2' then '팀장'
+	    			   when role_cd ='3' then '총괄책임자' else '' end as role_nm,
+	    			   date_format(last_login_dt, '%Y-%m-%d %H:%I:%S') as last_login
+	    from tn_user_info 
+	    where del_yn='N'
+	    order by team, role_cd desc, user_nm
+	    Limit #{pageNo}, #{rows}
+	</select>
+	<select id="getUserListCnt" parameterType="map" resultType="Integer">
+	    select count(*) as cnt
+	    from tn_user_info 
+	    where del_yn='N'
+	</select>
+
+	<select id="chkUserId" parameterType="map" resultType="Integer">
+	    select count(*) as  cnt from tn_user_info 
+	    where user_id=#{user_id}
+	</select>
+	
+	<select id="chkUserRole" parameterType="map" resultType="Integer">
+	    select count(*) as  cnt from tn_user_info 
+	    where team = #{team} 
+	    and role_cd = #{role_cd}
+	    and user_id != #{user_id}
+	    and role_cd != '1'
+	    and del_yn='N'
+	</select>
+	
+	<select id="isUser" parameterType="map" resultType="Integer">
+	    select count(*) as  cnt from tn_user_info 
+	    where user_id = #{user_id}
+	    and pwd = #{pwd}
+	</select>
+	
+	<update id="chgUserPwd" parameterType="map">
+	    update tn_user_info
+	    set pwd = #{newPwd}
+	    ,update_dt = sysdate()
+	    where user_id = #{user_id}
+	</update>
+	
+	<update id="updateUserList" parameterType="map">
+	    update tn_user_info 
+	    set user_nm = #{user_nm}
+	    ,role_cd = #{role_cd}
+	    ,team = #{team}
+	    ,email = #{email}
+	    ,email_pw = #{email_pw}
+	    ,email_host = #{email_host}
+	    ,email_port = #{email_port}
+	    ,position = #{position}
+	    ,tel = #{tel}
+	    ,mobile = #{mobile}
+	    ,fax = #{fax}
+	    ,update_dt = sysdate()
+	    where user_id=#{user_id}
+	    and pwd = #{pwd}
+	</update>
+	
+	<insert id="insertUserList" parameterType="map">
+	    insert into tn_user_info 
+	    (
+			user_id,
+			user_nm,
+			user_type,
+			pwd,
+			team,
+			role_cd,
+			email,
+			email_pw,
+			email_host,
+			email_port,
+			tel,
+			mobile,
+			fax,
+			position,
+			create_dt,
+			update_dt
+		)
+		values(
+			#{user_id},
+			#{user_nm},
+			'A',
+			#{pwd},
+			#{team},
+			#{role_cd},
+			#{email},
+			#{email_pw},
+			#{email_host},
+			#{email_port},
+			#{tel},
+			#{mobile},
+			#{fax},
+			#{position},
+			sysdate(),
+			sysdate()
+		)
+	</insert>
+	
+	<update id="deleteUserList" parameterType="map">
+		update tn_user_info 
+		set del_yn='Y'
+		where user_id = #{user_id}
+	</update>
+	
+	<select id="selectCodeList" parameterType="map" resultType="HashMap">
+	    select * , 
+	    (select user_nm from tn_user_info where user_id = A.create_id) as create_nm,
+	    (select user_nm from tn_user_info where user_id = A.modify_id) as modify_nm,
+ 	    date_format(create_dt, '%Y-%m-%d') as f_create_dt,
+ 	    date_format(modify_dt, '%Y-%m-%d') as f_modify_dt
+	    from tn_common_cd_group A
+	    Limit #{pageNo}, #{rows}
+	</select>
+	
+	<select id="getCodeListCnt" parameterType="map" resultType="Integer">
+	     select count(*) as cnt
+	    from tn_common_cd_group
+	</select>
+	
+	
+	<insert id="insertCodeGrp" parameterType="map">
+	    insert into tn_common_cd_group 
+	    (
+			cd_group_nm,
+			cd_group_cd,
+			del_yn,
+			create_id,
+			create_dt,
+			modify_id,
+			modify_dt
+		)
+		values(
+			#{cd_group_nm},
+			#{cd_group_cd},
+			'N',
+			#{user},
+			sysdate(),
+			#{user},
+			sysdate()
+		)
+	</insert>
+	
+	<update id="updateCodeGrp" parameterType="map">
+	    update tn_common_cd_group 
+	    set 
+			cd_group_cd = #{cd_group_cd},
+			cd_group_nm = #{cd_group_nm},
+			modify_id = #{user},
+			modify_dt = sysdate()
+		where cd_group_id = #{cd_group_id}
+	</update>
+
+	<update id="deleteCodeGrp" parameterType="map">
+	    update tn_common_cd_group 
+	    set 
+			del_yn = 'Y',
+			modify_id = #{user},
+			modify_dt = sysdate()
+		where cd_group_id = #{cd_group_id}
+	</update>
+	
+	<select id="chkCodeGrp" parameterType="map" resultType="Integer">
+		select count(*) as  cnt 
+		from tn_common_cd_group
+		where cd_group_cd = #{cd_group_cd} 
+	
+	</select>
+	<select id="chkCodeSub" parameterType="map" resultType="Integer">
+		select count(*) as  cnt 
+		from tn_common_cd
+		where cd = #{cd}
+		and cd_group_id = #{cd_group_id} 
+	</select>
+	
+	<insert id="insertCodeSub" parameterType="map">
+	    insert into tn_common_cd 
+	    (
+			cd,
+			cd_nm,
+			parent_cd,
+			depth,
+			cd_seq,
+			cd_group_id,
+			bigo,
+			create_id,
+			create_dt,
+			modify_id,
+			modify_dt
+		)
+		values(
+			#{cd},
+			#{cd_nm},
+			#{parent_cd},
+			#{depth},
+			#{cd_seq},
+			#{cd_group_id},
+			#{bigo},
+			#{user},
+			sysdate(),
+			#{user},
+			sysdate()
+		)
+	</insert>
+	
+	<update id="updateCodeSub" parameterType="map">
+	    update tn_common_cd 
+	    set 
+			cd_nm = #{cd_nm},
+			parent_cd = #{parent_cd},
+			depth = #{depth},
+			cd_seq = #{cd_seq},
+			bigo = #{bigo},
+			modify_id = #{user},
+			modify_dt = sysdate()
+		where cd_id = #{cd_id}
+	</update>
+
+	<update id="deleteCodeSub" parameterType="map">
+	    update tn_common_cd 
+	    set 
+			del_yn = 'Y',
+			modify_id = #{user},
+			modify_dt = sysdate()
+		where cd_id = #{cd_id}
+	</update>
+	
+	<update id="deleteCodeSubAll" parameterType="map">
+	    update tn_common_cd 
+	    set 
+			del_yn = 'Y',
+			modify_id = #{user},
+			modify_dt = sysdate()
+		where cd_group_id = #{cd_group_id}
+	</update>
+	
+	
+	<select id="selectCodeSubList" parameterType="map" resultType="HashMap">
+	    select * , 
+	    (select user_nm from tn_user_info where user_id = A.create_id) as create_nm,
+	    (select user_nm from tn_user_info where user_id = A.modify_id) as modify_nm,
+ 	    date_format(create_dt, '%Y-%m-%d') as f_create_dt,
+ 	    date_format(modify_dt, '%Y-%m-%d') as f_modify_dt
+	    from tn_common_cd A
+	    where cd_group_id = #{cd_group_id}
+	    order by cd_seq
+	</select>
+	
+	<select id="selectEvalList" parameterType="map" resultType="HashMap">
+		/* 적격심사정보 조회 (admin-Sql-Map.selectEvalList) */	
+	    select * from tn_eval_info 
+		where eval_group = #{eval_group}
+		and eval_type = #{eval_type}
+		order by eval_gubun, eval_cd
+	</select>
+	
+	<update id="updateEvalList" parameterType="map">
+	    /* 적격심사정보 수정 (admin-Sql-Map.updateEvalList) */	
+	    update tn_eval_info 
+	    set val = #{val}
+	    where eval_id=#{eval_id}
+	</update>
+	
+	<select id="selectBizTypeList" parameterType="map" resultType="HashMap">
+	    /* 업종정보 조회 (admin-Sql-Map.selectBizTypeList) */	
+	    select * , 
+	    (select user_nm from tn_user_info where user_id = A.create_id) as create_nm,
+	    (select user_nm from tn_user_info where user_id = A.modify_id) as modify_nm,
+ 	    date_format(create_dt, '%Y-%m-%d') as f_create_dt,
+ 	    date_format(modify_dt, '%Y-%m-%d') as f_modify_dt
+	    from tn_biz_gubun_info A
+	    where 1=1
+	    <if test="parent_cd!=null and !parent_cd.equals('')">  
+		       and parent_cd  =  #{parent_cd}            
+		</if>
+	    <if test="parent_cd==null">  
+		       and parent_cd  is null or length(parent_cd) = 0            
+		</if>
+	    order by cd_seq
+	</select>
+</mapper>

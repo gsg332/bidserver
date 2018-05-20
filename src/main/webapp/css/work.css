@@ -1,0 +1,39 @@
+.order{position:relative; width:740px; margin:20px auto;}
+.order h3{font-size:18px; font-weight:bold; width:300px; margin:20px auto;}
+.order p.date{position:absolute; left:0; top:10px;}
+
+.order table{width:100%; border:2px solid #666;}
+.order table th{line-height:14px;font-size:12px; padding:1px; background:#ccc; border-bottom:1px solid #333; border-left:1px solid #333;}
+.order table th.first{border-left:none;}
+.order table td{ line-height:14px;font-size:10px; text-align:left; vertical-align:top; font-size:12px; border-bottom:1px solid #666; border-left:1px solid #666; padding:5px 10px;}
+.order table td.first{border-left:none;}
+.order table td.last{border-bottom:none;}
+.order table td.center{text-align:center;}
+.order table td.dash{border-bottom:1px dashed #333; }
+.order table td.bg{background:#ccc;}
+.order table td.bold {font-weight:bold;}
+.order table td.middle {vertical-align:middle;}
+.order table td.nonp {padding:0;}
+.order table td.barcode {font-family:'Code39Seven';}
+
+
+.order table.topBox{border:none; margin:0; padding:0;}
+.order table.topBox td{padding:0; border:none;}
+.order table.topBox td .title{font-size:24px; font-weight:bold; padding:1px 1px; line-height:30px;}
+.order table.topBox td table.top {border:none; margin:0; width:auto;}
+.order table.topBox td table.top td{line-height:18px; text-align:left; vertical-align:top; font-size:12px; border-bottom:1px solid #666; padding:5px 10px;}
+.order table.topBox td table.top .title{border:none; font-size:24px; font-weight:bold;}
+.order table.topBox td table.top td.big{font-size:16px; font-weight:bold; line-height:25px;}
+.order table.topBox td table.top td.huge{font-size:20px; line-height:20px; text-align:center; font-weight:bold; }
+.order table.topBox td table.top td.last{border-bottom:none;}
+.order table.topBox td table.top td.center{text-align:center;}
+.order table.topBox td table.top td.line{border-left:1px solid #666;}
+.order table.topBox td table.left {border-top:2px solid #666; border-left:2px solid #666;}
+.order table.topBox td table.right {border-top:2px solid #666; border-left:2px solid #666; border-right:2px solid #666;}
+
+.order table.inbox {border:none;}
+.order table.inbox td{border:none;}
+.order table.inbox td.total{background:#ddd; font-size:16px; text-align:center; font-weight:bold; border-left:1px solid #666; vertical-align:middle;}
+
+.order table.bottom{border-top:none;}
+.order table.bottom td{text-align:center; font-weight:bold;}

@@ -1,0 +1,129 @@
+
+/* Default Setting */
+
+div.template * {margin:0 auto; padding: 0; line-height: 1; font-family: Dotum, sans-serif; font-size: 11px; color: #767676;}
+
+div.template li {list-style: none;}
+div.template a {display: inline-block; text-decoration: none; cursor: pointer; *display: inline; *zoom: 1;}
+div.template img {border: 0; vertical-align:middle;}
+
+
+/* Selectbox Styles */
+
+div.template div.select {width: 107px; background: url(../images/bbs/bgSelect.png) no-repeat; vertical-align: middle; text-align: left; color: #969696;}
+div.template div.select a.value {display: block; padding: 7px 8px; line-height: 13px;}
+div.template div.select ul {display: none; padding: 6px 0 5px; border: solid 1px #ddd; border-top: none; background: #fff; z-index: 5;}
+div.template div.select li a {padding: 4px 7px; line-height: 13px;}
+div.template div.select.on ul {display: block;}
+
+div.template table div.select {position: relative;}
+div.template table div.select ul {position: absolute; top: 27px; left: 0; width: 105px;}
+
+
+/* Checkbox Styles (+ Label) */
+
+div.template a.check {width: 15px; height: 15px; background: url(../images/bbs/objChk.png) no-repeat; vertical-align: middle; line-height: 0; font-size: 0;}
+div.template a.check.on {background: url(../images/bbs/objChkOn.png) no-repeat;}
+
+div.template label {margin-left: 5px; line-height: 13px; font-size: 11px; color: #808080; vertical-align: middle;}
+
+
+/* Textbox & Textarea Styles */
+
+div.template input[type="text"] {border: none; vertical-align: middle; font-family: Dotum, sans-serif; font-size: 11px; color: #969696;padding: 7px 12px;}
+div.template input[type="password"], div.template textarea {padding: 7px 12px; border: none; vertical-align: middle; font-family: Dotum, sans-serif; font-size: 11px; color: #969696;}
+
+div.template input[type="text"].short, div.template input[type="password"].short {width: 182px; background: url(../images/bbs/bgTxtShort.png) no-repeat;}
+div.template input[type="text"].short.essential, div.template input[type="password"].short.essential {width: 182px; background: url(../images/bbs/bgTxtShortEssential.png) no-repeat;}
+div.template input[type="text"].long, div.template input[type="password"].long {width: 231px; background: url(../images/bbs/bgTxtLong.png) no-repeat;}
+div.template input[type="text"].long.essential, div.template input[type="password"].long.essential {width: 231px; background: url(../images/bbs/bgTxtLongEssential.png) no-repeat;}
+div.template input[type="text"].tiny, div.template input[type="password"].tiny {width: 62px; background: url(../images/bbs/bgTxtTiny.png) no-repeat;}
+div.template input[type="text"].subject {width: 574px; background: url(../images/bbs/bgTxtSubject.png) no-repeat;}
+div.template input[type="text"].link {width: 447px; background: url(../images/bbs/bgTxtLink.png) no-repeat;}
+
+
+div.template textarea {padding: 12px; overflow: auto; line-height: 15px;}
+div.template textarea.body {width: 574px; height: 213px; background: url(../images/bbs/bgAreaBody.png) no-repeat;}
+
+
+/* Board : Common */
+
+div.template.board {position: relative; width: 1000px; margin:0 20px;}
+div.template.board a {color: #767676;}
+
+div.template.board p.stats {margin-bottom: 15px;}
+div.template.board p.stats span.count {color: #00c2f3;}
+
+div.template.board div.search {position: absolute; top: 20px; right: 25px; padding-left: 82px; text-align: center; z-index: 10;}
+div.template.board div.search div.select {position: absolute; top: 0; left: 0; width: 77px; background: url(../images/bbs/bgSelectSearch.png) no-repeat; *margin-top: 1px; padding:0;}
+div.template.board div.search input.keyword {width: 110px; padding: 7px 36px 7px 10px; border: none; background: url(../images/bbs/bgTxtSearch.png); color: #969696;}
+div.template.board div.search a.search {position: absolute; top: 5px; right: 10px; z-index: 5;}
+
+div.board2 {position: relative; width: 1000px; margin:0 00px 00px 00px;}
+div.board2 div.search {position: absolute; top: 0px; right: 25px; padding-left: 82px; text-align: center; z-index: 10;}
+div.board2 div.search div.select {position: absolute; top: 0; left: 0; width: 77px; background: url(../images/bbs/bgSelectSearch.png) no-repeat; *margin-top: 1px;}
+div.board2 div.search input.keyword {width: 110px; padding: 7px 36px 7px 10px; border: none; background: url(../images/bbs/bgTxtSearch.png); color: #969696;}
+div.board2 div.search a.search {position: absolute; top: 5px; right: 10px; z-index: 5;}
+
+
+/* Board : List */
+div.bbsTop{margin:0 auto; padding:0; height:5px; background: url(../images/bbs/bgWrapTop.png) 0 0 no-repeat; margin:0 20px;}
+div.bbsBtm{margin:0 auto; padding:0; height:5px; background: url(../images/bbs/bgWrapBtm.png) 0 0 no-repeat; margin:0 20px;}
+
+div.template.board.list {width:1000px; background: url(../images/bbs/bgWrap.png) repeat-y; padding:20px;}
+div.template.board.list table {width: 100%; margin:0px auto 0px auto;  border-top: solid 2px #969696; z-index: 5; padding:0;}*/ 
+
+
+ div.template.board.list th, div.template.board.list td {line-height: 13px;}  
+ div.template.board.list th {height: 35px; border-bottom: solid 1px #cbcbcb; background:#f4f4f4;} 
+ div.template.board.list th.title {text-align:center; border-left:solid 1px #cbcbcb;} 
+
+div.template.board.list tr:first-child th.title:first-child {border-left:none;}
+div.template.board.list td {height: 40px; border-bottom: solid 1px #e4e4e4; text-align: center;}
+div.template.board.list td.notice {font-weight: bold;}
+div.template.board.list td.left {text-align: left;}
+div.template.board.list td a.check {margin-top: -1px; margin-right: 5px; *margin-top: 0;}
+
+div.template.board.list td a.subject {width: 365px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; line-height: 13px;}
+div.template.board.list td span {display: inline-block; height: 11px; margin-left: 4px; vertical-align: middle; *display: inline; *zoom: 1;}
+div.template.board.list td span.comment {display: inline; width: auto; height: auto; line-height: 14px; font-size: 11px; color: #0099bf;}
+div.template.board.list td span.new {width: 9px; background: url(../images/bbs/icnNew.png) no-repeat;}
+div.template.board.list td span.hot {width: 9px; background: url(../images/bbs/icnHot.png) no-repeat;}
+div.template.board.list td span.download {width: 10px; background: url(../images/bbs/icnDownload.png) no-repeat;}
+div.template.board.list td span.link {width: 7px; background: url(../images/bbs/icnLink.png) no-repeat;}
+div.template.board.list td span.lock {width: 10px; background: url(../images/bbs/icnLock.png) no-repeat;}
+
+
+/* Board : Write */
+
+div.template.board.write {width:1000px;background: url(../images/bbs/bgWrap.png) repeat-y; padding:20px;}
+div.template.board.write p.title {padding-bottom: 14px; font-size: 16px; font-weight: bold; color: #333; letter-spacing: -1px; text-align:left;}
+
+div.template.board.write table {width: 100%; margin-bottom: 30px; border-top: solid 2px #969696; padding:0;}
+div.template.board.write th, div.template.board.write td {height: 27px; padding: 9px 10px; border-bottom: solid 1px #efefef;}
+div.template.board.write th.ll, div.template.board.write td.ll {text-align:left;}
+div.template.board.write th.rr, div.template.board.write td.rr {text-align:right;}
+div.template.board.write th {padding-left: 11px; text-align: left; line-height: 14px; font-size: 12px; font-weight: bold; color: #767676; background:#f4f4f4;}
+div.template.board.write th.option {*width: 50px;}
+div.template.board.write th.add {padding-top: 18px; vertical-align: top;}
+div.template.board.write th.add div {padding: 10px 0 0 7px; line-height: 0; font-size: 0;}
+div.template.board.write th.add div a {margin-left: 4px; *margin-left: 3px;}
+div.template.board.write th div.add a:first-child {margin-left: 0;}
+div.template.board.write td a.check {margin-left: 10px;}
+div.template.board.write td a.check:first-child {margin-left: 0;}
+div.template.board.write td ul.button {display: inline-block; margin-left: 2px; vertical-align: middle; *display: inline; *zoom: 1;}
+div.template.board.write tr.gray th, div.template.board.write tr.gray td {height: 27px; padding-bottom: 0; border-bottom: none; background: #fdfdfd;}
+div.template.board.write tr.gray.first th, div.template.board.write tr.gray.first td {height: auto; padding-top: 12px;}
+div.template.board.write tr.gray.last th, div.template.board.write tr.gray.last td {height: auto; padding-bottom: 12px;}
+div.template.board.write tr.body th, div.template.board.write tr.body td {border-bottom: solid 1px #d5d5d5;}
+div.template.board.write tr.captcha td {border-top: solid 1px #d5d5d5;}
+div.template.board.write tr.captcha img {vertical-align: middle;}
+div.template.board.write tr.captcha input[type="text"] {margin-left: 20px; vertical-align: middle;}
+div.template.board.write tr.captcha span.tip {margin-left: 15px; padding-left: 17px; background: url(../image/common/icnInfo.png) no-repeat; vertical-align: middle; color: #b5b5b5;}
+
+div.template.board.write table.join th {width: 116px;}
+div.template.board.write table.join td span.plural, div.template.board.write table.join td label.plural {display: inline-block; vertical-align: middle; line-height: 15px; *display: inline; *zoom: 1;}
+div.template.board.write table.join td span.alert {margin-left: 15px; color: #e76565}
+div.template.board.write table.join td span.caution {margin-left: 15px; color: #b5b5b5;}
+div.template.board.write table.join td a.calendar {margin-left: 5px; vertical-align: middle;}
+div.template.board.write table.join tr.captcha td {border-top: none;}
